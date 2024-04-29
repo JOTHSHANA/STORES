@@ -13,7 +13,7 @@ connection.getConnection((err, conn)=>{
         console.error("Error connecting to MySQL:", err)
         console.log("Connection Failed da Priyan")
     }
-    console.log("Connection Success da Priyan")
+    console.log("Priyan! Connection success da")
     conn.release()
 })
 
