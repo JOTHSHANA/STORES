@@ -1,0 +1,48 @@
+.total-login-page {
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-card {
+    height: 65%;
+    width: 23%;
+    border-radius: 5px;
+    padding: 15px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 1px 5px -1px, rgba(0, 0, 0, 0.627) 0px 1px 5px -1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.signin-button {
+    padding: 7px;
+    width: 100%;
+    border: none;
+    border-radius: 5px;
+    background-color: white;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 1px 5px -1px, rgba(0, 0, 0, 0.627) 0px 1px 5px -1px;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: all 0.5s;
+}
+
+.signin-button:hover {
+    background-color: rgba(128, 128, 128, 0.134);
+}
+
+.google-logo {
+    height: 30px;
+}
+
+.login-image {
+    height: 350px;
+}
+
