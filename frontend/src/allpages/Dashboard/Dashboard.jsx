@@ -9,7 +9,6 @@ function Dashboard() {
 
 function Body() {
 
-
     return (
         <div>
             <Button label="Button" />

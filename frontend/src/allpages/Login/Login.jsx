@@ -1,4 +1,4 @@
-import React,{useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import './Login.css'
 import google from '../../assets/google.png'
 import loginImage from '../../assets/loginImage.png'
@@ -6,30 +6,23 @@ import apiHost from '../../components/utils/api'
 
 function Login() {
 
-    const [token, setToken] = useState(null);
-    const googleAuth = () => {
-        window.open(`${apiHost}/auth/google`, "_self");
+    const handleGoogleLogin = () => {
+        window.location.href = `${apiHost}/auth/google`;
     };
-
-    
-
-    useEffect(() => {
-        console.log("Token updated:", token);
-    }, [token]);
-    const handleLogout = () => {
-        setToken(null);
-    };
-
 
     return (
         <div>
-            <div className='total-login-page'>
-                <div className='login-card'>
+            <div className="total-login-page">
+                <div className="login-card">
                     <img src={loginImage} alt="Login Image" className="login-image" />
-                    <button className='signin-button' onClick={googleAuth}><img src={google} alt="GoogleImage" className="google-logo" />Sign in with Google</button>
+                    <button className="signin-button" onClick={handleGoogleLogin}>
+                        <img src={google} alt="GoogleImage" className="google-logo" />
+                        Sign in with Google
+                    </button>
                 </div>
             </div>
         </div>
+
     )
 }
 

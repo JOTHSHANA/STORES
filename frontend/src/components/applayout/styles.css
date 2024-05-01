@@ -93,7 +93,9 @@
     }
 
     .sidebar-menu {
-        display: block;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .sidebar-open {
@@ -120,20 +122,20 @@
     }
 }
 
-.topbar-right-content{
+.topbar-right-content {
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.app-name{
+.app-name {
     margin: 0px 10px;
-    font-weight: 700;
-    color: #704F4F;
-    font-size: 20px;
+    font-weight: 900;
+    color: #492D2D;
+    font-size: 25px;
 }
 
-.list-div{
+.list-div {
     list-style: none;
     padding: 0;
     margin: 0;
@@ -142,27 +144,41 @@
     gap: 2px;
 }
 
-.list-items{
+
+.list-items {
     padding: 10px;
     border-radius: 3px;
     transition: all 0.3s;
 }
 
 .list-items:hover{
-    background-color: #704F4F;
+    background-color: #492d2da8;
+}
+.list-items.active {
+    background-color: #492d2d;
 }
 
-.list-items:hover .link{
+.list-items.active .link {
     color: white;
 }
 
-.link{
+.list-items:hover .link {
+    color: white;
+}
+
+.link {
     text-decoration: none;
-    color: #704F4F;
+    color: #492d2d;
     font-weight: 700;
-    font-size: 17px;
+    font-size: 18px;
     display: flex;
     align-items: center;
     transition: all 0.3s;
+}
 
+.logout-buttons{
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    width: 100%;
 }
