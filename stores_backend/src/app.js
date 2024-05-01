@@ -10,6 +10,7 @@ require("dotenv").config({ path: path.resolve(__dirname, "../.env") });
 // routes
 const resources_route = require("./routes/auth/res_route");
 const auth_route = require("./routes/auth/auth");
+const productStatus = require("./routes/ProductStatus/productStatus")
 
 const morgan_config = morgan(
   ":method :url :status :res[content-length] - :response-time ms"
@@ -41,6 +42,7 @@ app.use(express.json());
 // routes
 app.use("/auth", resources_route);
 app.use("/auth", auth_route);
+app.use("/status", productStatus)
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
