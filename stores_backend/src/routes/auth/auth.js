@@ -14,7 +14,7 @@ router.get("/google/callback",
     function(req, res) {
         req.user.token = generateToken(req.user, 600, req.user.name, req.user.role_id);
         console.log("token:", req.user.token);
-        const redirectUrl = new URL(process.env.CLIENT_URL + "/dashboard?token=" + req.user.token);
+        const redirectUrl = new URL(process.env.CLIENT_URL + "/dashboard");
         redirectUrl.searchParams.append('token', req.user.token);
         redirectUrl.searchParams.append('role', req.user.role_id);
         redirectUrl.searchParams.append('name', req.user.name);

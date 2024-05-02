@@ -4,6 +4,7 @@ import Login from './allpages/Login/Login'
 import Dashboard from './allpages/Dashboard/Dashboard'
 import TaskForm from './allpages/TaskForm/TaskForm'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import WorkSpace from './allpages/WorkSpace/WorkSpace'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -16,6 +17,8 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path='/taskform' element={<TaskForm />}/>
+          <Route path='/workspace' element={<WorkSpace />}/>
+
         </Routes>
       </BrowserRouter>
 

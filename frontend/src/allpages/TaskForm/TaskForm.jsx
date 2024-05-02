@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import AppLayout from "../../components/applayout/AppLayout";
 import './TaskForm.css';
 import Button from "../../components/Button/Button";
+import Card from '../../components/Cards/Cards';
+
 
 function TaskForm() {
     return <AppLayout rId={2} body={<Body />} />;
@@ -73,6 +75,7 @@ function Body() {
                     <Button label="Submit & Add Another" />
                     <Button type="submit" label="Submit" />
                 </div>
+                {formData.taskId && <Card task={formData} />}
             </form>
         </div>
     );
