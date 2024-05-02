@@ -16,7 +16,7 @@ function SideBar(props) {
     const fetchSidebarItems = async () => {
       try {
         const role = Cookies.get('role');
-        const response = await requestApi("GET", "/auth/resources?role=3");
+        const response = await requestApi("GET", `/auth/resources?role=${role}`);
         if (response.success) {
           setSidebarItems(response.data);
         } else {

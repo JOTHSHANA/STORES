@@ -26,8 +26,11 @@ passport.use(new GoogleStrategy({
                 const user = results[0];
                 user.role_id = user.role_id
                 user.name = user.name
+                user.id = user.id
                 console.log(user.name)
                 console.log(user.role_id)
+                console.log(user.id)
+
                 return done(null, user);
             } else {
                 // User not found, you might want to handle this case differently
