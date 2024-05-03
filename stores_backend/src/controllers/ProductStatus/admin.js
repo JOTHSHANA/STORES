@@ -4,7 +4,7 @@ exports.get_Admin = async(req, res)=>{
     try{
         const query = `
         SELECT task_id, req_person, product_details, quantity, available_qty, date, status 
-        FROM products WHERE status = '0'||'1' || '2'|| '3'||'4'||'5'||'6'||'7'
+        FROM tasks WHERE status = '0'||'1' || '2'|| '3'||'4'||'5'||'6'||'7'
         `
         const admin = await get_database(query);
         res.json(admin)
