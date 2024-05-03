@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import requestApi from '../../components/utils/axios';
 import AppLayout from '../../components/applayout/AppLayout';
 import Button from '../../components/Button/Button';
+import Cookies from "js-cookie";
 import './TaskForm.css'
 
 function TaskForm() {
@@ -18,6 +19,21 @@ function Body() {
     const [date, setDate] = useState(new Date().toISOString().substr(0, 10));
     const [personsOptions, setPersonsOptions] = useState([]);
 
+
+
+    useEffect(() => {
+        fetchPersonsOptions();
+    }, []);
+
+    const fetchPersonsOptions = async () => {
+        try {
+            const response = await requestApi('GET', '/status/user');
+            setPersonsOptions(response.data);
+        } catch (error) {
+            console.error('Error fetching persons options:', error);
+        }
+    };
+
     // Handle form submission
     const handleSubmit = async (event) => {
         event.preventDefault(); // Prevent default form submission
@@ -25,11 +41,10 @@ function Body() {
         // Collect form data
         const formData = {
             task_id: task_id,
-            req_person: req_person,
+            req_person: parseInt(req_person),
             product_details: product_details,
-            date: date,
+            task_date: date,
             quantity: parseInt(quantity),
-            available_qty: 0
         };
         console.log(formData)
 
@@ -62,7 +77,7 @@ function Body() {
         setTaskId('');
         setReqPerson('');
         setProductDetails('');
-        setDate('');
+        setDate(new Date().toISOString().substr(0, 10));
         setQuantity('');
     };
 
@@ -73,59 +88,43 @@ function Body() {
     };
 
 
-    // useEffect(() => {
-    //     // Fetch options from the backend
-    //     fetchPersonsOptions(); // Function to fetch options from the backend
-    // }, []);
-
-    // const fetchPersonsOptions = async () => {
-    //     try {
-    //         const response = await fetch('your-backend-url');
-    //         const data = await response.json();
-    //         setPersonsOptions(data); // Assuming data is an array of objects with { value, label } structure
-    //     } catch (error) {
-    //         console.error('Error fetching persons options:', error);
-    //     }
-    // };
-
-
     return (
         <div className="form-div">
             <form className="form" onSubmit={handleSubmit}>
                 <div className="each-field">
-                    <label className="form-label" htmlFor="taskid">Task Id:</label>
-                    <input className="form-input" type="text" name="task_id" value={task_id} onChange={(e) => setTaskId(e.target.value)} />
+                    <label className="form-label" htmlFor="taskid">Task Id:<span className="required">*</span></label>
+                    <input className="form-input" type="text" name="task_id" value={task_id} onChange={(e) => setTaskId(e.target.value)} required />
                 </div>
+
                 <div className="each-field">
-                    <label className="form-label" htmlFor="req_person">Requested Person:</label>
-                    <input className="form-input" type="text" name="req_person" value={req_person} onChange={(e) => setReqPerson(e.target.value)} />
-                </div>
-                {/* <div className="each-field">
-                    <label className="form-label" htmlFor="req_person">Requested Person:</label>
-                    <select className="form-input" name="req_person" value={req_person} onChange={(e) => setReqPerson(e.target.value)}>
+                    <label className="form-label" htmlFor="req_person">Requested Person:<span className="required">*</span></label>
+                    <select className="form-input" name="req_person" value={req_person} onChange={(e) => setReqPerson(e.target.value)} required>
                         <option value="">Select Requested Person</option>
                         {personsOptions.map((person) => (
-                            <option key={person.value} value={person.value}>{person.label}</option>
+                            <option key={person.id} value={person.id}>{person.name}</option>
                         ))}
                     </select>
-                </div> */}
+                </div>
+
                 <div className="each-field">
-                    <label className="form-label" htmlFor="product_details">Product Details:</label>
-                    <input className="form-input" type="text" name="product_details" value={product_details} onChange={(e) => setProductDetails(e.target.value)} />
+                    <label className="form-label" htmlFor="product_details">Product Details:<span className="required">*</span></label>
+                    <input className="form-input" type="text" name="product_details" value={product_details} onChange={(e) => setProductDetails(e.target.value)} required />
                 </div>
                 <div className="each-field">
-                    <label className="form-label" htmlFor="date">Requested Date:</label>
-                    <input className="form-input" type="date" name="date" value={date} onChange={(e) => setDate(e.target.value)} />
+                    <label className="form-label" htmlFor="date">Requested Date:<span className="required">*</span></label>
+                    <input className="form-input" type="date" name="date" value={date} onChange={(e) => setDate(e.target.value)} required />
                 </div>
                 <div className="each-field">
-                    <label className="form-label" htmlFor="quantity">Quantity</label>
-                    <input className="form-input" type="number" name="quantity" value={quantity} onChange={(e) => setQuantity(e.target.value)} />
+                    <label className="form-label" htmlFor="quantity">Quantity:<span className="required">*</span></label>
+                    <input className="form-input" type="number" name="quantity" value={quantity} onChange={(e) => setQuantity(e.target.value)} required />
                 </div>
                 <div className="each-field1">
                     <Button label="Submit & Add Another" />
                     <Button type="submit" label="Submit" onClick={handleAddAnother} />
                 </div>
             </form>
+
+
         </div>
     );
 }

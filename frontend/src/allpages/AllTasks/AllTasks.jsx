@@ -69,9 +69,9 @@ function Body() {
     const filterData = (data) => {
         return data.filter((item) =>
             item.task_id.toLowerCase().includes(search.toLowerCase())||
-            item.req_person.toLowerCase().includes(search.toLowerCase()) ||
+            // item.req_person.toLowerCase().includes(search.toLowerCase()) ||
             item.product_details.toLowerCase().includes(search.toLowerCase())||
-            item.date.includes(search)
+            item.task_date.includes(search)
         );
     };
 
@@ -94,7 +94,7 @@ function Body() {
                             <div className='details-div'>
                                 <div className='each-detail'><div><strong>Requested Person :</strong></div><p className='info'>{task.req_person}</p></div>
                                 <div className='each-detail'><strong>Product Details :</strong><p className='info'>{task.product_details}</p></div>
-                                <div className='each-detail'><strong>Requested Date :</strong> <p className='info'>{task.date}</p></div>
+                                <div className='each-detail'><strong>Requested Date :</strong> <p className='info'>{task.task_date}</p></div>
                                 <div className='each-detail'><strong>Quantity :</strong><p className='info'>{task.quantity}</p></div>
                             </div>
                         </div>

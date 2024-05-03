@@ -43,14 +43,7 @@ function TopBar(props) {
         <div className="app-name">STORES</div>
       </div>
       <div className="topbar-right-content">
-        <div className="search-input">
-          <div style={{ display: "flex", gap: 10 }}>
-            <SearchRoundedIcon
-              sx={{ color: "#472d2d", fontSize: "20px" }}
-            />
-            <input placeholder="Search" />
-          </div>
-        </div>
+        
         <div onClick={handleOpenModal}>
           <MoreVertIcon sx={{ color: "#472d2d", cursor:"pointer" }} />
         </div>

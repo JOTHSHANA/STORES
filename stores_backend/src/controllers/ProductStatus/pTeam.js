@@ -6,15 +6,14 @@ exports.post_pTeam = async (req, res) => {
     req_person,
     product_details,
     quantity,
-    available_qty,
-    date,
+    task_date,
   } = req.body;
   if (
     !task_id ||
     !req_person ||
     !product_details ||
     !quantity ||
-    !date
+    !task_date
   ) {
     return res.status(400).json({
       errro: "fields are required!",
@@ -23,13 +22,13 @@ exports.post_pTeam = async (req, res) => {
 
   try {
     const query = `
-        INSERT INTO tasks (task_id, req_person, product_details, quantity, available_qty, date)
-        VALUES(?, ?, ?, ?, ?, ?)
+        INSERT INTO tasks (task_id, req_person, product_details, quantity, task_date)
+        VALUES(?, ?, ?, ?, ?)
         `;
 
     const success_message = await post_database(
       query,
-      [task_id, req_person, product_details, quantity, available_qty, date],
+      [task_id, req_person, product_details, quantity,  task_date],
       "Products added Successfully"
     );
     res.json({ message: success_message });

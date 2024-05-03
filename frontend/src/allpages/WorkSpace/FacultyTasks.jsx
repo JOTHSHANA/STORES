@@ -22,7 +22,7 @@ function Body() {
     const [taskData, setTaskData] = useState([]);
     const [selectedTask, setSelectedTask] = useState(null);
     const [open, setOpen] = useState(false);
-    const name = Cookies.get('name');
+    const id = Cookies.get('id');
 
     useEffect(() => {
         fetchTaskData();
@@ -30,7 +30,7 @@ function Body() {
 
     const fetchTaskData = async () => {
         try {
-            const response = await requestApi("GET", `/status/reqPerson?req_person=${name}`);
+            const response = await requestApi("GET", `/status/req-person?req_person=${id}`);
             if (!response.data || !response.success) {
                 throw new Error('Failed to fetch task data');
             }
@@ -69,7 +69,7 @@ function Body() {
                             <div className='details-div'>
                                 <div className='each-detail'><div><strong>Requested Person :</strong></div><p className='info'>{task.req_person}</p></div>
                                 <div className='each-detail'><strong>Product Details :</strong><p className='info'>{task.product_details}</p></div>
-                                <div className='each-detail'><strong>Requested Date :</strong> <p className='info'>{task.date}</p></div>
+                                <div className='each-detail'><strong>Requested Date :</strong> <p className='info'>{task.task_date}</p></div>
                                 <div className='each-detail'><strong>Quantity :</strong><p className='info'>{task.quantity}</p></div>
                             </div>
                         </div>

@@ -43,3 +43,9 @@
     width: 60%;
     height: 25px;
 }
+
+.required {
+    color: red;
+    margin-left: 5px; /* Adjust spacing between label and asterisk */
+}
+
