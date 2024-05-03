@@ -1,69 +1,95 @@
 const { get_database, post_database } = require("../../config/db_utils");
 
+
+// get stores
+exports.get_stores = async(req, res)=>{
+  try{
+    const query = `
+    SELECT  tasks.id,task_id,users.name , req_person, product_details, quantity, received_qty, task_date, tasks.status 
+    FROM tasks
+    INNER JOIN users
+    ON tasks.req_person = users.id
+     WHERE tasks.status = '3'
+    `
+    const taskstatus = await get_database(query);
+    const formatDate = (dateString) => {
+      const date = new Date(dateString);
+      return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+    };
+
+    taskstatus.forEach(task => {
+      task.task_date = formatDate(task.task_date);
+    });
+    res.json(taskstatus)
+}catch(err){
+    console.error("Error fetching Stores Task Status", err)
+    res.status(500).json({error: "Error fetching Stores task status"})
+}
+}
+
+// reqPerson------stores
+async function fetchAllDates() {
+  const fetchDatesQuery = `
+    SELECT dates
+    FROM date_day
+    ORDER BY dates ASC
+  `;
+  const datesResult = await get_database(fetchDatesQuery);
+  return datesResult.map(row => row.dates.toISOString().split('T')[0]);
+}
+
+async function isDateSetInDateDay(date) {
+  const formattedDate = date.toISOString().split('T')[0]; 
+
+  const checkDateSetQuery = `
+    SELECT COUNT(*)
+    FROM date_day
+    WHERE dates =?
+  `;
+  const countResult = await get_database(checkDateSetQuery, [formattedDate]);
+  console.log(`Count result for date ${date}:`, countResult); // Debugging log
+  return countResult[0]['COUNT(*)'] > 0;
+}
+
+async function findNextAvailableDate() {
+  const dates = await fetchAllDates(); 
+
+  let currentDate = new Date(); 
+  currentDate.setHours(0, 0, 0, 0);
+
+  while (true) {
+    currentDate.setDate(currentDate.getDate() + 1);
+    if (await isDateSetInDateDay(currentDate)) {
+    } else {
+      break;
+    }
+  }
+
+  return currentDate.toISOString().split('T')[0]; 
+}
+
 exports.update_PersonTask_stores = async (req, res) => {
   const id = req.query.id;
   if (!id) {
     return res.status(400).json({ error: "task id is required" });
   }
   try {
-    const currentDate = new Date();
-    currentDate.setUTCHours(0, 0, 0, 0);
-    const currentDateFormatted = currentDate.toISOString().split('T')[0];
-    console.log(currentDateFormatted)
-    const dateListQuery = `
-      SELECT DATE(CONVERT_TZ(dates,'+00:00','+00:00')) AS dates
-      FROM date_day
-      WHERE dates > '${currentDateFormatted}'
-      ORDER BY dates;
-    `;
-    const dateList = await get_database(dateListQuery);
-    
-    console.log("Retrieved dates from the database:", dateList);
+    const nextAvailableDate = await findNextAvailableDate();
+    console.log(`Next available date: ${nextAvailableDate}`);
 
-    const datesArray = dateList.map(row => {
-      const dateWithoutTimezone = new Date(row.dates);
-      dateWithoutTimezone.setUTCHours(0, 0, 0, 0);
-      return dateWithoutTimezone;
-    });
-
-    console.log("Dates array:", datesArray);
-
-    let nextAvailableDate;
-    for (let i = 0; i <= datesArray.length ; i++) {
-      const nextDate = new Date(currentDate);
-      nextDate.setDate(currentDate.getDate() + i);
-      const nextDateWithoutTimezone = new Date(Date.UTC(nextDate.getUTCFullYear(), nextDate.getUTCMonth(), nextDate.getUTCDate()));
-      if (!datesArray.find(date => date.getTime() === nextDateWithoutTimezone.getTime())) {
-        nextAvailableDate = nextDate;
-        break;
-      }
-    }
-
-    console.log("Next available date:", nextAvailableDate);
-
-    if (!nextAvailableDate) {
-      return res.status(500).json({ error: "No available date found" });
-    }
-    nextAvailableDate.setDate(nextAvailableDate.getDate() + 1);
-
-    // Format the next available date
-    const nextAvailableDateString = nextAvailableDate.toISOString().split('T')[0];
-
-    console.log("Formatted next available date:", nextAvailableDateString);
-
-    // Update the task with the next available date
-    const updateQuery = `
+    const updateTaskQuery = `
       UPDATE tasks
       SET status = '3',
-          st_from_date = '${currentDateFormatted}',
-          st_due_date = '${nextAvailableDateString}'
+          st_from_date = DATE_ADD(DATE(?) , INTERVAL 9 HOUR),
+          st_due_date = DATE_ADD(DATE(?) + INTERVAL 9 HOUR, INTERVAL 9 HOUR)
       WHERE id =?
     `;
     const success_message = await post_database(
-      updateQuery,
-      [id],
+      updateTaskQuery,
+      [nextAvailableDate, nextAvailableDate, id],
       "Req Person Updation Successful"
     );
+    console.log(`Date set in tasks table: ${nextAvailableDate}`);
     res.json({ message: success_message });
   } catch (err) {
     console.error("Error updating ReqPerson status", err);

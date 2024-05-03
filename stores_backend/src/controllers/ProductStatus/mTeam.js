@@ -3,10 +3,21 @@ const {get_database, post_database} = require('../../config/db_utils')
 exports.get_Mteam = async(req, res)=>{
     try{
         const query = `
-        SELECT task_id, req_person, product_details, quantity, available_qty, date, status 
-        FROM tasks WHERE status = '0'
-        `
+        SELECT  tasks.id,task_id,users.name , req_person, product_details, quantity, received_qty, task_date, tasks.status 
+    FROM tasks
+    INNER JOIN users
+    ON tasks.req_person = users.id
+     WHERE tasks.status = '0'
+    `;
         const mteam = await get_database(query);
+        const formatDate = (dateString) => {
+            const date = new Date(dateString);
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+          };
+      
+          mteam.forEach(task => {
+            task.task_date = formatDate(task.task_date);
+          });
         res.json(mteam)
     }catch(err){
         console.error("Error fetching Task Status", err)
@@ -21,7 +32,7 @@ exports.update_MteamTask = async(req, res)=>{
     }
     try{
         const query =`
-        UPDATE products
+        UPDATE tasks
         SET status = '1'
         WHERE id =?
         `
