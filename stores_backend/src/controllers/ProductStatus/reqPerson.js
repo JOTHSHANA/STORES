@@ -7,8 +7,8 @@ exports.get_ReqPerson = async (req, res) => {
   }
   try {
     const query = `
-        SELECT task_id, product_details, quantity, available_qty, date , status, req_person
-        FROM products WHERE req_person =?
+        SELECT task_id, product_details, quantity, available_qty, date , status
+        FROM tasks WHERE req_person =?
         `;
     const mteam = await get_database(query, [req_person]);
     res.json(mteam);
@@ -19,24 +19,4 @@ exports.get_ReqPerson = async (req, res) => {
 };
 
 
-exports.update_PersonTask = async (req, res) => {
-  const id = req.query.id;
-  if (!id) {
-    return res.status(400).json({ error: "task id is required" });
-  }
-  try {
-    const query = `
-        UPDATE products
-        SET status = '3'
-        WHERE id =?
-        `;
-    const success_message = await post_database(
-      query,
-      [id],
-      "Req Person Updation Successfull"
-    );
-    res.json({ message: success_message });
-  } catch (err) {
-    console.error("Error updating ReqPerson status");
-  }
-};
+

@@ -22,7 +22,7 @@ const Welcome = () => {
         token: Cookies.get("token"),
         name: Cookies.get("name"),
         role: Cookies.get("role"),
-        id: Cookies.get("id")
+        id: Cookies.get("id"),
       };
       console.log("Saved JSON data:", savedData);
       navigate("/dashboard");

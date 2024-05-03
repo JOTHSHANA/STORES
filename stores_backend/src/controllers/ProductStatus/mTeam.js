@@ -4,7 +4,7 @@ exports.get_Mteam = async(req, res)=>{
     try{
         const query = `
         SELECT task_id, req_person, product_details, quantity, available_qty, date, status 
-        FROM products WHERE status = '0'
+        FROM tasks WHERE status = '0'
         `
         const mteam = await get_database(query);
         res.json(mteam)
