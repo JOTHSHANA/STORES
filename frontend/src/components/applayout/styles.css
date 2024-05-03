@@ -21,6 +21,12 @@
     gap: 5px;
     color: grey;
     background-color: rgb(248, 250, 252);
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 5px;
+    position: sticky;
+    top: 0px;
+    z-index: 1;
 }
 
 .topbar-account {
@@ -72,7 +78,7 @@
 
 .app-body {
     overflow: auto;
-    padding: 20px;
+    padding: 12px;
     padding-bottom: 80px;
 }
 
@@ -120,6 +126,12 @@
         justify-content: start;
         gap: 10px;
     }
+
+    .app-body {
+        padding: 7px;
+        margin-bottom: 60px;
+    }
+    
 }
 
 .topbar-right-content {

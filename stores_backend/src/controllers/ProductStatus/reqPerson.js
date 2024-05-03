@@ -7,7 +7,7 @@ exports.get_ReqPerson = async (req, res) => {
   }
   try {
     const query = `
-        SELECT task_id, product_details, quantity, available_qty, date , status
+        SELECT task_id, product_details, quantity, available_qty, date , status, req_person
         FROM products WHERE req_person =?
         `;
     const mteam = await get_database(query, [req_person]);
