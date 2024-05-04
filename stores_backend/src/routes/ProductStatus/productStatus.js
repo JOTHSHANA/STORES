@@ -11,9 +11,11 @@ const router = express.Router()
 router.get("/req-person", reqPerson.get_ReqPerson)
 
 // stores
+router.get("/stores", stores.get_stores)
 router.put("/stores", stores.update_PersonTask_stores)
 
 // Purchasing Team
+router.get("/pteam", pTeam.get_pteam)
 router.post("/pteam",pTeam.post_pTeam)
 router.put("/pteam", pTeam.update_Acc_PteamTask)
 router.put("/pteam-stores",pTeam.update_Pteam_StoresTask)
