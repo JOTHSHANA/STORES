@@ -33,7 +33,6 @@ exports.post_pTeam = async (req, res) => {
     req_person,
     product_details,
     quantity,
-    available_qty,
   } = req.body;
   if (!task_id || !req_person || !product_details || !quantity ) {
     return res.status(400).json({
@@ -45,13 +44,13 @@ exports.post_pTeam = async (req, res) => {
     const currentDate = new Date();
     const currentDateTime = currentDate.toISOString().slice(0, 19).replace('T', ' ');
     const query = `
-        INSERT INTO tasks (task_id, req_person, product_details, quantity, available_qty, task_date)
-        VALUES(?, ?, ?, ?, ?, ?)
+        INSERT INTO tasks (task_id, req_person, product_details, quantity, task_date)
+        VALUES(?, ?, ?, ?, ?)
         `;
 
     const success_message = await post_database(
       query,
-      [task_id, req_person, product_details, quantity, available_qty, currentDateTime],
+      [task_id, req_person, product_details, quantity, currentDateTime],
       "Products added Successfully"
     );
     res.json({ message: success_message });
