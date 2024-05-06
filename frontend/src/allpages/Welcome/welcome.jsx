@@ -25,7 +25,7 @@ const Welcome = () => {
         id: Cookies.get("id"),
       };
       console.log("Saved JSON data:", savedData);
-      navigate("/dashboard");
+      navigate("/history");
     }
   }, [searchParams, navigate]);
 

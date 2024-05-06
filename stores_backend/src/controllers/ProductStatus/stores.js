@@ -9,7 +9,8 @@ exports.get_stores = async(req, res)=>{
     FROM tasks
     INNER JOIN users
     ON tasks.req_person = users.id
-     WHERE tasks.status = '3'
+     WHERE tasks.status = '2'
+     AND delayed_status = '0'
     `
     const taskstatus = await get_database(query);
     const formatDate = (dateString) => {
@@ -78,12 +79,14 @@ exports.update_PersonTask_stores = async (req, res) => {
     console.log(`Next available date: ${nextAvailableDate}`);
 
     const updateTaskQuery = `
-      UPDATE tasks
-      SET status = '3',
-          st_from_date = DATE_ADD(DATE(?) , INTERVAL 9 HOUR),
-          st_due_date = DATE_ADD(DATE(?) + INTERVAL 9 HOUR, INTERVAL 9 HOUR)
-      WHERE id =?
-    `;
+    UPDATE tasks
+    SET status = '3',
+        st_from_date = DATE_ADD(DATE(?) , INTERVAL 9 HOUR),
+        st_due_date = DATE_ADD(DATE(?) + INTERVAL 9 HOUR, INTERVAL 9 HOUR),
+        rp_due_date = CURRENT_TIMESTAMP,
+        delayed_status = CASE WHEN CURRENT_TIMESTAMP > DATE_ADD(DATE(?) + INTERVAL 9 HOUR, INTERVAL 9 HOUR) THEN '1' ELSE delayed_status END
+    WHERE id = ?
+  `;
     const success_message = await post_database(
       updateTaskQuery,
       [nextAvailableDate, nextAvailableDate, id],

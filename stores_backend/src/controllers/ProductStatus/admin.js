@@ -3,12 +3,14 @@ const { get_database, post_database } = require("../../config/db_utils");
 exports.get_Admin = async (req, res) => {
   try {
     const query = `
-        SELECT tasks.id, task_id,users.name req_person, product_details, quantity, available_qty, date, tasks.status 
-        FROM tasks 
-        INNER JOIN users
-        ON tasks.req_person = users.id
-        WHERE tasks.status = '0'||'1' || '2'|| '3'||'4'||'5'||'6'||'7'
-        `;
+    SELECT  tasks.task_id,users.name,task_type.type, req_person, product_details, quantity, amount, advance_amount, task_date, tasks.status 
+    FROM tasks
+    INNER JOIN users
+    ON tasks.req_person = users.name
+    INNER JOIN task_type
+    ON tasks.task_type = task_type.id
+    WHERE tasks.status = '0'||'1' || '2'|| '3'||'4'||'5'||'6'||'7'||'8'||'9'||'10'||'11'||'12'||'13
+ `;
     const admin = await get_database(query);
     const formatDate = (dateString) => {
       const date = new Date(dateString);
