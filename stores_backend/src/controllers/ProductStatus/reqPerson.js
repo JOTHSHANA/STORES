@@ -25,7 +25,6 @@ exports.get_ReqPerson = async (req, res) => {
   }
 };
 
-
 exports.post_ReqPerson = async (req, res) => {
   const {
     req_person,
@@ -43,7 +42,6 @@ exports.post_ReqPerson = async (req, res) => {
   }
 
   try {
-    // Inserting task into the tasks table
     const taskInsertQuery = `
       INSERT INTO tasks (req_person, task_type, product_details, amount, advance_amount, quantity, task_date)
       VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP);
@@ -56,14 +54,19 @@ exports.post_ReqPerson = async (req, res) => {
       advance_amount,
       quantity,
     ]);
-
-    // Getting the last inserted taskId
     const taskIdQuery = `SELECT task_id FROM tasks ORDER BY task_id DESC LIMIT 1`;
-    const taskIdResult = await post_database(taskIdQuery);
-    const taskId = taskIdResult[0].task_id;
-    console.log(taskId)
+    const taskIdResult = await get_database(taskIdQuery);
+    console.log(taskIdResult);
+    if (
+      !taskIdResult ||
+      taskIdResult.length === 0 ||
+      !taskIdResult[0].task_id
+    ) {
+      return res.status(500).json({ error: "Unable to fetch taskId" });
+    }
 
-    // Inserting taskId into the date_completion table
+    const taskId = taskIdResult[0].task_id;
+
     const dateCompletionQuery = `
       INSERT INTO date_completion (task) VALUES (?);
     `;
@@ -72,26 +75,66 @@ exports.post_ReqPerson = async (req, res) => {
     res.json({ message: "Tasks added successfully" });
   } catch (error) {
     console.error("Error:", error);
-    res.status(500).json({ error: "An error occurred while processing your request" });
+    res
+      .status(500)
+      .json({ error: "An error occurred while processing your request" });
   }
 };
 
-
-
-
-exports.update_advance= async(req, res)=>{
+exports.update_advance = async (req, res) => {
   const id = req.query.id;
-  if(!id) {
-    return res.status(400).json({error:"task id is required"})
+  if (!id) {
+    return res.status(400).json({ error: "task id is required" });
   }
-  try{
+  try {
     const query = `
     UPDATE date_completion ,tasks
     SET date_completion.rp_app_advance = CURRENT_TIMESTAMP,
     tasks.status = '6' 
     WHERE task_id = ?
     `;
-  }catch{
+    await post_database(query, [id]);
+    res.json({ message: "req_person Advance Tasks added successfully" });
+  } catch (err) {
+    console.error("Error updating req_person Advance");
+  }
+};
 
+
+exports.update_stores  = async(req, res)=>{
+  const id = req.query.id;
+  if (!id) {
+    return res.status(400).json({ error: "task id is required" });
+  }
+  try {
+    const query = `
+    UPDATE date_completion ,tasks
+    SET date_completion.rp_app_stores = CURRENT_TIMESTAMP,
+    tasks.status = '8' 
+    WHERE task_id = ?
+    `;
+    await post_database(query, [id]);
+    res.json({ message: "Req_person stores Tasks added successfully" });
+  } catch (err) {
+    console.error("Error updating req_person Stores");
+  }
+}
+
+exports.update_accounts  = async(req, res)=>{
+  const id = req.query.id;
+  if (!id) {
+    return res.status(400).json({ error: "task id is required" });
+  }
+  try {
+    const query = `
+    UPDATE date_completion ,tasks
+    SET date_completion.rp_app_acc = CURRENT_TIMESTAMP,
+    tasks.status = '11' 
+    WHERE task_id = ?
+    `;
+    await post_database(query, [id]);
+    res.json({ message: "Req_person accounts Tasks added successfully" });
+  } catch (err) {
+    console.error("Error updating req_person Accounts");x
   }
 }

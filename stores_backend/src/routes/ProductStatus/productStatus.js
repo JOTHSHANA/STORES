@@ -12,6 +12,9 @@ const router = express.Router()
 // reqPerson
 router.get("/req-person", reqPerson.get_ReqPerson)
 router.post("/req-person",reqPerson.post_ReqPerson )
+router.put("/person-advance", reqPerson.update_advance)
+router.put("/person-stores", reqPerson.update_stores)
+router.put("/req-accounts", reqPerson.update_accounts)
 
 // stores
 router.get("/stores", stores.get_stores)
