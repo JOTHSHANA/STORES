@@ -9,7 +9,7 @@ exports.get_Taskstatus = async (req, res) => {
     ON tasks.req_person = users.id
     INNER JOIN task_type
     ON tasks.task_type = task_type.id
-    WHERE tasks.status = '0'||'1' || '2'|| '3'||'4'||'5'||'6'||'7'||'8'||'9'||'10'||'11'||'12'||'13'
+    WHERE tasks.status IN ('1', '2', '3' ,'4', '5', '6','7', '8', '9', '10', '11', '12', '13')
         `;
     const taskstatus = await get_database(query);
     const formatDate = (dateString) => {
