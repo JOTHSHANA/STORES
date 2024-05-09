@@ -124,7 +124,7 @@ exports.update_advance = async (req, res) => {
 };
 
 
-exports.update_stores  = async(req, res)=>{
+exports.update_stores = async (req, res) => {
   const id = req.query.id;
   if (!id) {
     return res.status(400).json({ error: "task id is required" });
@@ -143,7 +143,7 @@ exports.update_stores  = async(req, res)=>{
   }
 }
 
-exports.update_accounts  = async(req, res)=>{
+exports.update_accounts = async (req, res) => {
   const id = req.query.id;
   if (!id) {
     return res.status(400).json({ error: "task id is required" });
@@ -158,6 +158,6 @@ exports.update_accounts  = async(req, res)=>{
     await post_database(query, [id]);
     res.json({ message: "Req_person accounts Tasks added successfully" });
   } catch (err) {
-    console.error("Error updating req_person Accounts");x
+    console.error("Error updating req_person Accounts"); x
   }
 }

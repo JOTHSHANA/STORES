@@ -9,8 +9,8 @@ exports.get_dates = async (req, res) => {
   
       const formattedDates = dates.map(dateObj => {
         const date = new Date(dateObj.dates);
-        const monthNames = ["January", "February", "March", "April", "May", "June",
-                            "July", "August", "September", "October", "November", "December"];
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                            "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
         const day = date.getDate();
         const monthIndex = date.getMonth();
         const year = date.getFullYear();
