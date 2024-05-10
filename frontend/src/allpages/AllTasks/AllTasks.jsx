@@ -68,8 +68,8 @@ function Body() {
 
     const filterData = (data) => {
         return data.filter((item) =>
-            item.task_id.toLowerCase().includes(search.toLowerCase())||
-            // item.req_person.toLowerCase().includes(search.toLowerCase()) ||
+            // item.task_id.includes(search)||
+            item.name.toLowerCase().includes(search.toLowerCase()) ||
             item.product_details.toLowerCase().includes(search.toLowerCase())||
             item.task_date.includes(search)
         );
@@ -92,14 +92,14 @@ function Body() {
                             <p className='card-heading'><strong>TASK ID:</strong> {task.task_id}</p>
                             <hr />
                             <div className='details-div'>
-                                <div className='each-detail'><div><strong>Requested Person :</strong></div><p className='info'>{task.req_person}</p></div>
+                                <div className='each-detail'><div><strong>Requested Person :</strong></div><p className='info'>{task.name}</p></div>
                                 <div className='each-detail'><strong>Product Details :</strong><p className='info'>{task.product_details}</p></div>
                                 <div className='each-detail'><strong>Requested Date :</strong> <p className='info'>{task.task_date}</p></div>
                                 <div className='each-detail'><strong>Quantity :</strong><p className='info'>{task.quantity}</p></div>
                             </div>
                         </div>
                         <Box sx={{ width: '100%' }}>
-                            <Stepper activeStep={3} alternativeLabel>
+                            <Stepper activeStep={1} alternativeLabel>
                                 {steps.map((label) => (
                                     <Step key={label}>
                                         <StepLabel>{label}</StepLabel>
@@ -130,7 +130,7 @@ function Body() {
                                 </div>
                                 <div class="detail">
                                     <label>Requested Person:</label>
-                                    <span>{selectedTask.req_person}</span>
+                                    <span>{selectedTask.name}</span>
                                 </div>
                                 <div class="detail">
                                     <label>Product Details:</label>
@@ -138,7 +138,7 @@ function Body() {
                                 </div>
                                 <div class="detail">
                                     <label>Requested Date:</label>
-                                    <span>{selectedTask.date}</span>
+                                    <span>{selectedTask.task_date}</span>
                                 </div>
                                 <div class="detail">
                                     <label>Quantity:</label>

@@ -1,61 +1,101 @@
 .workspace-div {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(550px, 1fr));
-    gap: 10px; /* Adjust gap between cards */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(550px, 1fr));
+  gap: 10px;
+  /* Adjust gap between cards */
+}
+
+.card {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px 10px 10px 10px;
+  padding: 20px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  border-left: 5px solid #1c0c6ac7;
+}
+
+.card:hover {
+  background-color: #1c0c6a04;
+}
+
+.card-heading {
+  margin: 0px;
+}
+
+
+.add-form-icon {
+  position: absolute;
+  top: 87%;
+  left: 94%;
+}
+
+@media (max-width: 768px) {
+  .workspace-div {
+    grid-template-columns: repeat(auto-fit, minmax(100%, 1fr));
   }
-  
+
   .card {
-    background-color: #ffffff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-    transition: all 0.3s ease-in-out;
-  }
-  .card:hover{
-    background-color: #7055551f;
-  }
-  .card-heading{
-    margin: 0px;
-  }
-  
-  @media (max-width: 768px) {
-    .workspace-div {
-      grid-template-columns: repeat(auto-fit, minmax(100%, 1fr));
-    }
-    .card {
-      padding: 5px;
-    }
-  }
-  .details-div{
-    display: flex;
-    flex-direction: column;
+    padding: 5px;
   }
 
-  .each-detail{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin: 7px;
+  .add-form-icon {
+    left: 80%;
+    top: 88%;
   }
 
-  .info{
-    margin: 0px;
-    word-wrap: break-word;
-    max-width: 40%;
-  }
- 
-  .details-container {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    width: 550px;
+}
+
+.details-div {
+  display: flex;
+  flex-direction: column;
+}
+
+
+.each-detail {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 7px;
+}
+
+.info {
+  margin: 0px;
+  word-wrap: break-word;
+  max-width: 40%;
+}
+
+.details-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
 .detail {
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
+  font-weight: 600;
 }
 
+#scroll-dialog-title {
+  font-family: "Inconsolata", monospace;
+  font-weight: 800;
+  font-size: 25px;
+  letter-spacing: 2PX;
+}
 
+.detail>span {
+  color: black;
+  font-size: 16px;
+}
+
+.popup-button-flex {
+  display: flex;
+  flex-direction: column;
+}
+
+.status-update-button {
+  display: flex;
+  flex-direction: column;
+}

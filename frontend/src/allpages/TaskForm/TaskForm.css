@@ -22,7 +22,12 @@
     align-items: center;
     justify-content:space-between;
     border-bottom: 1px solid gray;
-    padding: 30px;
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+
+.css-1t1j96h-MuiPaper-root-MuiDialog-paper{
+    min-width: 60%;
 }
 .each-field1{
     flex: 1;
@@ -43,9 +48,39 @@
     width: 60%;
     height: 25px;
 }
+.form-input-select{
+    width: 60.9%;
+    height: 30px;
+}
 
 .required {
     color: red;
     margin-left: 5px; /* Adjust spacing between label and asterisk */
 }
 
+
+@media (max-width: 999px){
+    .each-field{
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+        padding: 15px;
+    }
+
+    .each-field1{
+        flex-direction: column;
+        align-items: flex-end;
+        padding: 10px;
+    }
+
+    .form-input{
+        width: 100%;
+    }
+    .css-1t1j96h-MuiPaper-root-MuiDialog-paper{
+        min-width: 95%;
+    }
+
+    .form-input-select{
+        width: 100%;
+    }
+}

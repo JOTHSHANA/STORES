@@ -20,7 +20,7 @@ function TopBar(props) {
     <div
       className="app-topbar"
       style={{
-        backgroundColor: "#d7d7da",
+        backgroundColor: "white",
         display: "flex",
         padding: "10px 10px",
         justifyContent: "space-between",
@@ -45,7 +45,7 @@ function TopBar(props) {
       <div className="topbar-right-content">
         
         <div onClick={handleOpenModal}>
-          <MoreVertIcon sx={{ color: "#472d2d", cursor:"pointer" }} />
+          <MoreVertIcon sx={{ color: "#63228B", cursor:"pointer" }} />
         </div>
       </div>
       <Modal

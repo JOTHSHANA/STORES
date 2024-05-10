@@ -13,8 +13,9 @@ import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import Box from '@mui/material/Box';
 import Cookies from "js-cookie";
+import TaskForm from "../TaskForm/TaskForm"
 
-function FacultyTasks() {
+function Approvals() {
     return <AppLayout rId={7} body={<Body />} />;
 }
 
@@ -22,6 +23,8 @@ function Body() {
     const [taskData, setTaskData] = useState([]);
     const [selectedTask, setSelectedTask] = useState(null);
     const [open, setOpen] = useState(false);
+    const [openTaskForm, setOpenTaskForm] = useState(false); // State for TaskForm dialog
+    const [receivedQty, setReceivedQty] = useState(0); // State to store received_qty
     const id = Cookies.get('id');
 
     useEffect(() => {
@@ -34,6 +37,7 @@ function Body() {
             if (!response.data || !response.success) {
                 throw new Error('Failed to fetch task data');
             }
+            console.log(response)
             const data = response.data;
             setTaskData(data);
         } catch (error) {
@@ -50,7 +54,51 @@ function Body() {
         setOpen(false);
     };
 
-    const steps = [
+    const handleTaskFormOpen = () => {
+        setOpenTaskForm(true);
+    };
+
+    const handleTaskFormClose = () => {
+        setOpenTaskForm(false);
+    };
+
+    const handleIntimateFaculty = async () => {
+        try {
+            if (!selectedTask) {
+                throw new Error('No task selected');
+            }
+            // Update the values id and received_qty via /status/pteam-person
+            const response = await requestApi("PUT", `/status/pteam-person?id=${selectedTask.id}`, {
+                received_qty: receivedQty // Use the state receivedQty
+            });
+            console.log(response);
+            // Close the dialog after successful update
+            setOpen(false);
+        } catch (error) {
+            console.error('Error updating values:', error);
+        }
+    };
+
+    const handleReceived = async () => {
+        try {
+            if (!selectedTask) {
+                throw new Error('No task selected');
+            }
+            // Send only the id to backend via /status/pteam-stores
+            const response = await requestApi("PUT", `/status/pteam-stores?id=${selectedTask.id}`);
+            console.log(response);
+            // Close the dialog after successful update
+            setOpen(false);
+        } catch (error) {
+            console.error('Error sending id to backend:', error);
+        }
+    };
+
+    const handleReceivedQtyChange = (event) => {
+        setReceivedQty(event.target.value);
+    };
+
+    const steps = ['INITIATED',
         'STORES (OR) P-TEAM',
         'REQUEST PERSON',
         'STORES',
@@ -67,10 +115,10 @@ function Body() {
                             <p className='card-heading'><strong>TASK ID:</strong> {task.task_id}</p>
                             <hr />
                             <div className='details-div'>
-                                <div className='each-detail'><div><strong>Requested Person :</strong></div><p className='info'>{task.req_person}</p></div>
+                                <div className='each-detail'><div><strong>Requested Person :</strong></div><p className='info'>{task.name}</p></div>
                                 <div className='each-detail'><strong>Product Details :</strong><p className='info'>{task.product_details}</p></div>
-                                <div className='each-detail'><strong>Requested Date :</strong> <p className='info'>{task.task_date}</p></div>
-                                <div className='each-detail'><strong>Quantity :</strong><p className='info'>{task.quantity}</p></div>
+                                {/* <div className='each-detail'><strong>Requested Date :</strong> <p className='info'>{task.task_date}</p></div>
+                                <div className='each-detail'><strong>Quantity :</strong><p className='info'>{task.quantity}</p></div> */}
                             </div>
                         </div>
                         <Box sx={{ width: '100%' }}>
@@ -91,9 +139,9 @@ function Body() {
                 aria-labelledby="scroll-dialog-title"
                 aria-describedby="scroll-dialog-description"
             >
-                <DialogTitle id="scroll-dialog-title">Task Details</DialogTitle>
+                <DialogTitle id="scroll-dialog-title">DETAILS</DialogTitle>
                 <DialogContent dividers>
-                    <DialogContentText id="scroll-dialog-description">
+                    <DialogContentText id="scroll-dialog-description" style={{ color: 'black' }}>
                         {selectedTask && (
                             <div className="details-container">
                                 <div class="detail">
@@ -102,7 +150,7 @@ function Body() {
                                 </div>
                                 <div class="detail">
                                     <label>Requested Person:</label>
-                                    <span>{selectedTask.req_person}</span>
+                                    <span>{selectedTask.name}</span>
                                 </div>
                                 <div class="detail">
                                     <label>Product Details:</label>
@@ -110,7 +158,7 @@ function Body() {
                                 </div>
                                 <div class="detail">
                                     <label>Requested Date:</label>
-                                    <span>{selectedTask.date}</span>
+                                    <span>{selectedTask.task_date}</span>
                                 </div>
                                 <div class="detail">
                                     <label>Quantity:</label>
@@ -125,26 +173,53 @@ function Body() {
                                         ))}
                                     </Stepper>
                                 </Box>
-                                {selectedTask.status == 3 && (
-                                    <div>
-                                        <Button label="Intimate Faculty"/>
-                                        <Button label="Bill Received from Stores"/>
-                                        <Button label="Passed to Accounts"/>
+                                {selectedTask.status == 5 && (
+                                    <div className="popup-button-flex">
+                                        <DialogContent dividers>
+                                            <div className="status-update-button">
+                                                Advance given?
+                                                <div>
+                                                    <input type="text" name="received_qty" value={receivedQty} onChange={handleReceivedQtyChange} />
+                                                </div>
+                                                <Button label="Advance Done" onClick={handleIntimateFaculty} />
+                                            </div>
+                                        </DialogContent>
+
+
                                     </div>
                                 )}
-                                {selectedTask.status == 4 && (
-                                    <Button label="Intimate Faculty"/>
+                                {selectedTask.status == 7 && (
+                                    <div className="popup-button-flex">
+                                        <DialogContent dividers>
+                                            <div className="status-update-button">
+                                                Products Received from Stores?
+                                                <Button label="Products Received" onClick={handleReceived} />
+                                            </div>
+                                        </DialogContent>
+                                    </div>
+                                )}
+
+                                {selectedTask.status == 10 && (
+                                    <div className="popup-button-flex">
+                                        <DialogContent dividers>
+                                            <div className="status-update-button">
+                                                Bill paid by accounts?
+                                                <Button label="Bill Paid" />
+                                            </div>
+
+                                        </DialogContent>
+                                    </div>
                                 )}
                             </div>
                         )}
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose} label="Close"/>
+                    <Button onClick={handleClose} label="Close" />
                 </DialogActions>
             </Dialog>
         </div>
     );
 }
 
-export default FacultyTasks;
+export default Approvals;

@@ -65,7 +65,7 @@
 }
 
 .app-sidebar {
-    min-width: 230px;
+    min-width: 250px;
     height: 100%;
     transition: left 0.3s;
     overflow: auto;
@@ -143,8 +143,10 @@
 .app-name {
     margin: 0px 10px;
     font-weight: 900;
-    color: #492D2D;
-    font-size: 25px;
+    color: rgba(0, 0, 0, 0.885);
+    font-size: 20px;
+    letter-spacing: 3px;
+
 }
 
 .list-div {
@@ -161,28 +163,31 @@
     padding: 0px;
     border-radius: 3px;
     transition: all 0.3s;
+    letter-spacing: 1px;
 }
 
 .list-items:hover{
-    background-color: #492d2da8;
+    background-color: #1c0c6a25;
 }
 .list-items.active {
-    background-color: #492d2d;
+    background-color: #1c0c6a34;
 }
 
 .list-items.active .link {
-    color: white;
+    color: #1c0c6a;
+    border-left: 5px solid #493d88;
+    transition: all 0.5s;
 }
 
 .list-items:hover .link {
-    color: white;
+    color: #1c0c6a;
 }
 
 .link {
     text-decoration: none;
-    color: #492d2d;
+    color: rgba(0, 0, 0, 0.785);
     font-weight: 700;
-    font-size: 18px;
+    font-size: 16px;
     display: flex;
     align-items: center;
     padding: 12px;

@@ -5,6 +5,7 @@ import React, { useState, useEffect } from "react";
 import DatePicker from "react-multi-date-picker"
 import DatePanel from "react-multi-date-picker/plugins/date_panel"
 import requestApi from "../../components/utils/axios";
+import DeleteForeverTwoToneIcon from '@mui/icons-material/DeleteForeverTwoTone';
 
 function Holidays() {
     return <AppLayout rId={2} body={<Body />} />;
@@ -54,10 +55,11 @@ function Body() {
         try {
 
             console.log(selectedDates)
-            const response = await requestApi("POST", '/date/dates', selectedDates);
+            const response = await requestApi("POST", '/date/dates', { dates: selectedDates });
 
             if (response.success) {
                 console.log('Response from backend:', response);
+                fetchHolidays()
             } else {
                 console.log('Error response from backend:', response.error);
             }
@@ -76,7 +78,7 @@ function Body() {
                         plugins={[<DatePanel />]}
                         value={selectedDates}
                         onChange={handleDateChange}
-                        style={{ padding: '7px' }}
+                        style={{ padding: '7px', width: "300px" }}
                         placeholder="Select Holidays"
                     />
                 </div>
@@ -87,7 +89,9 @@ function Body() {
             <div className="display-holidays-grid">
                 {holidays.map((holiday, index) => (
                     <div key={index} className="holiday-item">
-                        {holiday.dates}
+                        {holiday}<div className="delete-icon-div">
+                            <DeleteForeverTwoToneIcon sx={{ fontSize: "16px", position: "relative", top: "2px", color: "red", left: "1px" }} />
+                        </div>
                     </div>
                 ))}
             </div>

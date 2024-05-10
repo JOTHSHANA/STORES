@@ -6,10 +6,10 @@ import TaskForm from './allpages/TaskForm/TaskForm'
 import Welcome from './allpages/Welcome/welcome'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import AllTasks from './allpages/AllTasks/AllTasks'
-import FacultyTasks from './allpages/WorkSpace/FacultyTasks'
 import Error from './allpages/error'
 import Holidays from './allpages/Holidays/Holidays'
-
+import MyTasks from './allpages/WorkSpace/Mytasks'
+import Approvals from './allpages/Approvals/Approvals'
 function App() {
   const [count, setCount] = useState(0)
 
@@ -17,16 +17,18 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
+        <Route path='*' element={<Error />} />
           <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />
           <Route path="/welcome" element={<Welcome />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path='/taskform' element={<TaskForm />} />
           <Route path='/alltasks' element={<AllTasks />} />
-          <Route path='/facultytasks' element={<FacultyTasks />} />
+          <Route path='/mytasks' element={<MyTasks />} />
           <Route path='/holidays' element={<Holidays />} />
+          <Route path='/approvals' element={<Approvals />} />
 
-          <Route path='*' element={<Error />} />
+          
         </Routes>
       </BrowserRouter>
 

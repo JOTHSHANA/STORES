@@ -3,105 +3,80 @@ import requestApi from '../../components/utils/axios';
 import AppLayout from '../../components/applayout/AppLayout';
 import Button from '../../components/Button/Button';
 import Cookies from "js-cookie";
-import './TaskForm.css'
+import './TaskForm.css';
 
 function TaskForm() {
-    return <AppLayout rId={2} body={<Body />} />;
-}
-
-function Body() {
-    // State for form inputs
-    const [task_id, setTaskId] = useState('');
-    const [req_person, setReqPerson] = useState('');
+    const [task_type, setTaskType] = useState('');
+    const [taskTypes, setTaskTypes] = useState([]);
     const [product_details, setProductDetails] = useState('');
     const [quantity, setQuantity] = useState('');
-    const [navigateStatus, setNavigateStatus] = useState(0); // 0: No navigation, 1: Navigate to "/workspace"
-    const [date, setDate] = useState(new Date().toISOString().substr(0, 10));
-    const [personsOptions, setPersonsOptions] = useState([]);
-
-
+    const [navigateStatus, setNavigateStatus] = useState(0);
+    const [amount, setAmount] = useState(0);
+    const [advancePayment, setAdvancePayment] = useState("");
+    const [advanceAmount, setAdvanceAmount] = useState(0);
+    const req_id = Cookies.get('id');
 
     useEffect(() => {
-        fetchPersonsOptions();
+        fetchTaskTypes();
     }, []);
 
-    const fetchPersonsOptions = async () => {
+    const fetchTaskTypes = async () => {
         try {
-            const response = await requestApi('GET', '/status/user');
-            setPersonsOptions(response.data);
+            const response = await requestApi('GET', '/status/type');
+            setTaskTypes(response.data);
         } catch (error) {
-            console.error('Error fetching persons options:', error);
+            console.error('Error fetching Task types:', error);
         }
     };
 
-    // Handle form submission
     const handleSubmit = async (event) => {
-        event.preventDefault(); // Prevent default form submission
-
-        // Collect form data
+        event.preventDefault();
         const formData = {
-            task_id: task_id,
-            req_person: parseInt(req_person),
+            task_type: task_type,
             product_details: product_details,
-            task_date: date,
             quantity: parseInt(quantity),
+            amount: parseInt(amount),
+            advance_amount: parseInt(advanceAmount),
+            req_person:req_id
         };
+
         console.log(formData)
 
         try {
-            // Send POST request using requestApi
-            const response = await requestApi('POST', '/status/pteam', formData);
-
+            const response = await requestApi('POST', '/status/req-person', formData);
             if (response.success) {
-                console.log(response.data); // Handle successful response
-                // If navigateStatus is 1, navigate to "/workspace"
                 if (navigateStatus === 1) {
-                    setNavigateStatus(0); // Reset navigateStatus
-                    window.location.href = "/alltasks"; // Navigate to "/workspace"
+                    setNavigateStatus(0);
+                    window.location.href = "/alltasks";
                 } else {
-                    // Clear form fields if navigateStatus is 0
                     clearFormFields();
                 }
             } else {
                 console.error('Error submitting form:', response.error);
-                // Handle error
             }
         } catch (error) {
             console.error('Error submitting form:', error);
-            // Handle error
         }
     };
 
-    // Function to clear form fields
     const clearFormFields = () => {
-        setTaskId('');
-        setReqPerson('');
+        setTaskType('');
         setProductDetails('');
-        setDate(new Date().toISOString().substr(0, 10));
         setQuantity('');
+        setAdvancePayment('');
+        setAdvanceAmount(0);
+        setAmount(0);
     };
-
-    // Function to handle "Submit & Add Another" button click
-    const handleAddAnother = () => {
-        setNavigateStatus(1); // Set navigateStatus to 1
-        handleSubmit(); // Call handleSubmit to submit the form
-    };
-
 
     return (
         <div className="form-div">
             <form className="form" onSubmit={handleSubmit}>
                 <div className="each-field">
-                    <label className="form-label" htmlFor="taskid">Task Id:<span className="required">*</span></label>
-                    <input className="form-input" type="text" name="task_id" value={task_id} onChange={(e) => setTaskId(e.target.value)} required />
-                </div>
-
-                <div className="each-field">
-                    <label className="form-label" htmlFor="req_person">Requested Person:<span className="required">*</span></label>
-                    <select className="form-input" name="req_person" value={req_person} onChange={(e) => setReqPerson(e.target.value)} required>
-                        <option value="">Select Requested Person</option>
-                        {personsOptions.map((person) => (
-                            <option key={person.id} value={person.id}>{person.name}</option>
+                    <label className="form-label" htmlFor="taskid">Task type:<span className="required">*</span></label>
+                    <select className="form-input-select" name="task-type" value={task_type} id="tasktype" onChange={(e) => setTaskType(e.target.value)} required>
+                        <option value="" disabled>Select type</option>
+                        {taskTypes.map((task, index) => (
+                            <option key={index} value={task.id}>{task.type}</option>
                         ))}
                     </select>
                 </div>
@@ -110,21 +85,38 @@ function Body() {
                     <label className="form-label" htmlFor="product_details">Product Details:<span className="required">*</span></label>
                     <input className="form-input" type="text" name="product_details" value={product_details} onChange={(e) => setProductDetails(e.target.value)} required />
                 </div>
+
                 <div className="each-field">
-                    <label className="form-label" htmlFor="date">Requested Date:<span className="required">*</span></label>
-                    <input className="form-input" type="date" name="date" value={date} onChange={(e) => setDate(e.target.value)} required />
+                    <label className="form-label" htmlFor="amount">Amount:<span className="required">*</span></label>
+                    <input className="form-input" type="text" name="amount" value={amount} onChange={(e) => setAmount(e.target.value)} required />
                 </div>
+
+                <div className="each-field">
+                    <label className="form-label" htmlFor="advancePayment">Advance payment:<span className="required">*</span></label>
+                    <select className="form-input-select" name="advancePayment" value={advancePayment} id="advancePayment" onChange={(e) => setAdvancePayment(e.target.value)} required>
+                        <option value="" disabled>Select type</option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+
+                {advancePayment === "Yes" && (
+                    <div className="each-field">
+                        <label className="form-label" htmlFor="advance_amount">Advance Amount:<span className="required">*</span></label>
+                        <input type="number" className="form-input" name="advance-amount" id="advanceamount" value={advanceAmount} onChange={(e) => setAdvanceAmount(e.target.value)} required />
+                    </div>
+                )}
+
                 <div className="each-field">
                     <label className="form-label" htmlFor="quantity">Quantity:<span className="required">*</span></label>
                     <input className="form-input" type="number" name="quantity" value={quantity} onChange={(e) => setQuantity(e.target.value)} required />
                 </div>
+
                 <div className="each-field1">
-                    <Button label="Submit & Add Another" />
-                    <Button type="submit" label="Submit" onClick={handleAddAnother} />
+                    <Button label="Submit & Add Another" onClick={handleSubmit} />
+                    <Button type="submit" label="Submit" />
                 </div>
             </form>
-
-
         </div>
     );
 }

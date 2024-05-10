@@ -1,10 +1,36 @@
 import React, { useState, useEffect } from "react";
 import "./styles.css";
 import { Link, useLocation } from "react-router-dom";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import Cookies from "js-cookie"; // Import Cookies library
+import Cookies from "js-cookie";
 import requestApi from "../utils/axios";
+import AssignmentTwoToneIcon from '@mui/icons-material/AssignmentTwoTone';
+import LibraryBooksTwoToneIcon from '@mui/icons-material/LibraryBooksTwoTone';
+import BookmarkAddedTwoToneIcon from '@mui/icons-material/BookmarkAddedTwoTone';
+import TravelExploreTwoToneIcon from '@mui/icons-material/TravelExploreTwoTone';
+import ExploreTwoToneIcon from '@mui/icons-material/ExploreTwoTone';
+import DangerousTwoToneIcon from '@mui/icons-material/DangerousTwoTone';
+import CalendarMonthTwoToneIcon from '@mui/icons-material/CalendarMonthTwoTone';
+import colors from "react-multi-date-picker/plugins/colors";
 
+function getIconComponent(iconPath) {
+  switch (iconPath) {
+    case "TravelExploreTwoToneIcon":
+      return TravelExploreTwoToneIcon;
+    case "AssignmentTwoToneIcon":
+      return AssignmentTwoToneIcon;
+    case "LibraryBooksTwoToneIcon":
+      return LibraryBooksTwoToneIcon;
+    case "BookmarkAddedTwoToneIcon":
+      return BookmarkAddedTwoToneIcon;
+    case "ExploreTwoToneIcon":
+      return ExploreTwoToneIcon;
+    case "CalendarMonthTwoToneIcon":
+      return CalendarMonthTwoToneIcon;
+    default:
+      // If the icon path is not found, return a default icon or null
+      return null;
+  }
+}
 
 function SideBar(props) {
   const [activeItem, setActiveItem] = useState("");
@@ -45,7 +71,7 @@ function SideBar(props) {
     <div
       className={props.open ? "app-sidebar sidebar-open" : "app-sidebar"}
       style={{
-        backgroundColor: "#d7d7da",
+        backgroundColor: "white",
         borderRight: "0.1px solid rgba(128, 128, 128, 0.296)"
       }}
     >
@@ -57,7 +83,8 @@ function SideBar(props) {
             onClick={() => setActiveItem(item.name)}
           >
             <Link className="link" to={item.path}>
-              <DashboardIcon sx={{ marginRight: "10px" }} />
+              {/* Dynamically render the icon component */}
+              {getIconComponent(item.icon_path) && React.createElement(getIconComponent(item.icon_path), { sx: { marginRight: "10px", color:"#1c0c6a" } })}
               {item.name}
             </Link>
           </li>
