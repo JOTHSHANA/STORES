@@ -7,15 +7,20 @@ exports.get_ReqPerson = async (req, res) => {
   }
   try {
     const query = `
-    SELECT  tasks.task_id,users.name ,task_type.type, req_person, product_details, quantity, amount, advance_amount, task_date, tasks.status 
+    SELECT apex.apex_id,apex.amount AS apex_amount,
+    tasks.task_id,users.name ,task_type.type,
+    req_person, product_details,purchase_order,ref_no, 
+    remaining_amount, quantity,received_qty, required_qty, 
+    tasks.amount, advance_amount, task_date, tasks.status 
     FROM tasks
+    INNER JOIN apex
+    ON tasks.apex = apex.id
     INNER JOIN users
     ON tasks.req_person = users.id
     INNER JOIN task_type
     ON tasks.task_type = task_type.id
-     WHERE req_person =?
-     
-        `;
+    WHERE req_person =?
+     `;
     const rperson = await get_database(query, [req_person]);
     res.json(rperson);
   } catch (err) {
@@ -31,14 +36,16 @@ exports.get_App_ReqPerson = async (req, res) => {
   }
   try {
     const query = `
-    SELECT  tasks.task_id,users.name ,task_type.type, req_person, product_details, quantity, amount, advance_amount, task_date, tasks.status 
+    SELECT apex.apex_id tasks.task_id,users.name ,task_type.type, req_person, product_details, quantity, amount, advance_amount, task_date, tasks.status 
     FROM tasks
+    INNER JOIN apex
+    ON tasks.apex_id = apex.id
     INNER JOIN users
     ON tasks.req_person = users.id
     INNER JOIN task_type
     ON tasks.task_type = task_type.id
      WHERE req_person =?
-     AND tasks.status IN ('5', '7', '10')
+     AND tasks.status IN ('3', '8', '12')
         `;
     const rperson = await get_database(query, [req_person]);
     res.json(rperson);
@@ -50,6 +57,7 @@ exports.get_App_ReqPerson = async (req, res) => {
 
 exports.post_ReqPerson = async (req, res) => {
   const {
+    apex_id,
     req_person,
     task_type,
     product_details,
@@ -58,7 +66,14 @@ exports.post_ReqPerson = async (req, res) => {
     quantity,
   } = req.body;
 
-  if (!req_person || !task_type || !product_details || !quantity || !amount) {
+  if (
+    !apex_id ||
+    !req_person ||
+    !task_type ||
+    !product_details ||
+    !quantity ||
+    !amount
+  ) {
     return res.status(400).json({
       error: "Fields are required!",
     });
@@ -66,10 +81,11 @@ exports.post_ReqPerson = async (req, res) => {
 
   try {
     const taskInsertQuery = `
-      INSERT INTO tasks (req_person, task_type, product_details, amount, advance_amount, quantity, task_date)
-      VALUES (?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP);
+      INSERT INTO tasks (apex_id, req_person, task_type, product_details, amount, advance_amount, quantity, task_date)
+      VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP);
     `;
     await post_database(taskInsertQuery, [
+      apex_id,
       req_person,
       task_type,
       product_details,
@@ -113,7 +129,7 @@ exports.update_advance = async (req, res) => {
     const query = `
     UPDATE date_completion ,tasks
     SET date_completion.rp_app_advance = CURRENT_TIMESTAMP,
-    tasks.status = '6' 
+    tasks.status = '4' 
     WHERE task_id = ?
     `;
     await post_database(query, [id]);
@@ -122,7 +138,6 @@ exports.update_advance = async (req, res) => {
     console.error("Error updating req_person Advance");
   }
 };
-
 
 exports.update_stores = async (req, res) => {
   const id = req.query.id;
@@ -133,7 +148,7 @@ exports.update_stores = async (req, res) => {
     const query = `
     UPDATE date_completion ,tasks
     SET date_completion.rp_app_stores = CURRENT_TIMESTAMP,
-    tasks.status = '8' 
+    tasks.status = '9' 
     WHERE task_id = ?
     `;
     await post_database(query, [id]);
@@ -141,7 +156,26 @@ exports.update_stores = async (req, res) => {
   } catch (err) {
     console.error("Error updating req_person Stores");
   }
-}
+};
+
+exports.update_par_stores = async (req, res) => {
+  const id = req.query.id;
+  if (!id) {
+    return res.status(400).json({ error: "task id is required" });
+  }
+  try {
+    const query = `
+    UPDATE date_completion ,tasks
+    SET date_completion.par_rp_app_stores = CURRENT_TIMESTAMP,
+    tasks.status = '16' 
+    WHERE task_id = ?
+    `;
+    await post_database(query, [id]);
+    res.json({ message: "Req_person stores Tasks added successfully" });
+  } catch (err) {
+    console.error("Error updating req_person Stores");
+  }
+};
 
 exports.update_accounts = async (req, res) => {
   const id = req.query.id;
@@ -152,12 +186,31 @@ exports.update_accounts = async (req, res) => {
     const query = `
     UPDATE date_completion ,tasks
     SET date_completion.rp_app_acc = CURRENT_TIMESTAMP,
-    tasks.status = '11' 
+    tasks.status = '13' 
     WHERE task_id = ?
     `;
     await post_database(query, [id]);
     res.json({ message: "Req_person accounts Tasks added successfully" });
   } catch (err) {
-    console.error("Error updating req_person Accounts"); x
+    console.error("Error updating req_person Accounts");
   }
-}
+};
+
+exports.update_par_accounts = async (req, res) => {
+  const id = req.query.id;
+  if (!id) {
+    return res.status(400).json({ error: "task id is required" });
+  }
+  try {
+    const query = `
+    UPDATE date_completion ,tasks
+    SET date_completion.par_rp_app_acc = CURRENT_TIMESTAMP,
+    tasks.status = '18' 
+    WHERE task_id = ?
+    `;
+    await post_database(query, [id]);
+    res.json({ message: "Req_person accounts Tasks added successfully" });
+  } catch (err) {
+    console.error("Error updating req_person Accounts");
+  }
+};

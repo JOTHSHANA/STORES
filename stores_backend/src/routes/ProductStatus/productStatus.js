@@ -7,6 +7,8 @@ const mTeam = require('../../controllers/ProductStatus/mTeam')
 const task = require('../../controllers/ProductStatus/taskStatus')
 const task_type = require('../../controllers/type/task_type')
 const apex = require("../../controllers/Apex/apex")
+const accounts = require("../../controllers/ProductStatus/accounts")
+const admin = require("../../controllers/ProductStatus/admin")
 
 const router = express.Router()
 
@@ -26,10 +28,17 @@ router.put("/req-accounts", reqPerson.update_accounts)
 
 // stores
 router.get("/stores", stores.get_stores)
+router.put('/stores-1',stores.update_stores_1)
+router.put('/stores-2',stores.update_stores_2)
+router.put('/stores-3',stores.update_stores_3)
+router.put('/stores-products', stores.update_stores_products)
+router.put('/stores-bill',stores.update_stores_bill)
+
 
 // Purchasing Team
 router.get("/pteam", pTeam.get_pteam)
-router.put("pteam", pTeam.update_pteam)
+router.put('/pteam', pTeam.update_pteam)
+router.put("pteam-advance", pTeam.update_advance_pteam)
 router.put("pteam-close", pTeam.update_Close_PurchaseBill)
 router.put("pteam-partial", pTeam.update_Partial_PurchaseBill)
 
@@ -37,6 +46,17 @@ router.put("pteam-partial", pTeam.update_Partial_PurchaseBill)
 // mteam
 router.get("/mteam", mTeam.get_Mteam)
 router.put("/mteam", mTeam.update_MteamTask)
+
+
+// accounts
+router.get("/accounts", accounts.get_accounts)
+router.put("/accounts-advance", accounts.update_accounts_advance)
+router.put("/accounts-pay",accounts.update_accounts_pay)
+
+// admin
+router.get('/admin', admin.get_Admin)
+router.put('/admin', admin.update_AdminTask)
+
 
 // common task
 router.get("/task", task.get_Taskstatus)
