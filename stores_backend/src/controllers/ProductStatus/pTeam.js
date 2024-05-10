@@ -4,19 +4,27 @@ const { get_database, post_database } = require("../../config/db_utils");
 exports.get_pteam = async (req, res) => {
   try {
     const query = `
-    SELECT  tasks.id,task_id,users.name , req_person, product_details, quantity, received_qty, task_date, tasks.status
+    SELECT apex.apex_id,apex.amount AS apex_amount,
+    tasks.task_id,users.name ,task_type.type,
+    req_person, product_details,purchase_order,ref_no, 
+    remaining_amount, quantity,received_qty, required_qty, 
+    tasks.amount, advance_amount, task_date, tasks.status 
     FROM tasks
+    INNER JOIN apex
+    ON tasks.apex = apex.id
     INNER JOIN users
     ON tasks.req_person = users.id
-     WHERE tasks.status = '1' AND delayed_status = '0'
+    INNER JOIN task_type
+    ON tasks.task_type = task_type.id
+     WHERE tasks.status IN ('1', '13', '18') 
     `;
     const taskstatus = await get_database(query);
     const formatDate = (dateString) => {
       const date = new Date(dateString);
-      return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+      return date.toLocaleDateString() + " " + date.toLocaleTimeString();
     };
 
-    taskstatus.forEach(task => {
+    taskstatus.forEach((task) => {
       task.task_date = formatDate(task.task_date);
     });
     res.json(taskstatus);
@@ -26,9 +34,82 @@ exports.get_pteam = async (req, res) => {
   }
 };
 
-// post task
+exports.update_advance_pteam = async (req, res) => {
+  const id = req.query;
+  if (!id) {
+    return res.status(400).json({ error: "task is required" });
+  }
+  try {
+    const query = `
+    UPDATE date_completion, tasks
+    SET date_completion.pteam_app = CURRENT_TIMESTAMP
+    AND tasks.status = '2'
+    WHERE tasks.task_id = ?
 
-// pteam ---- req person
+    `;
+    await post_database(query, [id]);
+    res.json({ message: "PTeam updated successfull" });
+  } catch (err) {
+    console.error("Error Updating Pteam task", err);
+  }
+};
 
+exports.update_pteam = async (req, res) => {
+  const id = req.query;
+  if (!id) {
+    return res.status(400).json({ error: "task is required" });
+  }
+  try {
+    const query = `
+    UPDATE date_completion, tasks
+    SET date_completion.pteam_app = CURRENT_TIMESTAMP
+    AND tasks.status = '3'
+    WHERE tasks.task_id = ?
 
+    `;
+    await post_database(query, [id]);
+    res.json({ message: "PTeam updated successfull" });
+  } catch (err) {
+    console.error("Error Updating Pteam task", err);
+  }
+};
 
+exports.update_Close_PurchaseBill = async (req, res) => {
+  const id = req.query;
+  if (!id) {
+    return res.status(400).json({ error: "task is required" });
+  }
+  try {
+    const query = `
+    UPDATE date_completion, tasks
+    SET date_completion.pteam_task_close = CURRENT_TIMESTAMP
+    AND tasks.status = '14'
+    WHERE tasks.task_id = ?
+
+    `;
+    await post_database(query, [id]);
+    res.json({ message: "PTeam close updated successfull" });
+  } catch (err) {
+    console.error("Error Updating Pteam close task", err);
+  }
+};
+
+exports.update_Partial_PurchaseBill = async (req, res) => {
+  const id = req.query;
+  if (!id) {
+    return res.status(400).json({ error: "task is required" });
+  }
+  try {
+    const query = `
+    UPDATE date_completion, tasks
+    SET date_completion.pteam_task_close = CURRENT_TIMESTAMP
+    AND tasks.status = '20'
+    WHERE tasks.task_id = ?
+
+    `;
+    await post_database(query, [id]);
+    res.json({ message: "PTeam Partail updated successfull" });
+  } catch (err) {
+    console.error("Error Updating Partial close task", err);
+  }
+};

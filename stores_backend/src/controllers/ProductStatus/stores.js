@@ -1,101 +1,133 @@
 const { get_database, post_database } = require("../../config/db_utils");
 
-
 // get stores
-exports.get_stores = async(req, res)=>{
-  try{
+exports.get_stores = async (req, res) => {
+  try {
     const query = `
-    SELECT  tasks.id,task_id,users.name , req_person, product_details, quantity, received_qty, task_date, tasks.status 
+    SELECT apex.apex_id,apex.amount AS apex_amount,
+    tasks.task_id,users.name ,task_type.type,
+    req_person, product_details,purchase_order,ref_no, 
+    remaining_amount, quantity,received_qty, required_qty, 
+    tasks.amount, advance_amount, task_date, tasks.status 
     FROM tasks
+    INNER JOIN apex
+    ON tasks.apex = apex.id
     INNER JOIN users
     ON tasks.req_person = users.id
-     WHERE tasks.status = '2'
-     AND delayed_status = '0'
-    `
+    INNER JOIN task_type
+    ON tasks.task_type = task_type.id
+     WHERE tasks.status IN ('4', '9')
+     
+    `;
     const taskstatus = await get_database(query);
     const formatDate = (dateString) => {
       const date = new Date(dateString);
-      return date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
+      return date.toLocaleDateString() + " " + date.toLocaleTimeString();
     };
 
-    taskstatus.forEach(task => {
+    taskstatus.forEach((task) => {
       task.task_date = formatDate(task.task_date);
     });
-    res.json(taskstatus)
-}catch(err){
-    console.error("Error fetching Stores Task Status", err)
-    res.status(500).json({error: "Error fetching Stores task status"})
-}
-}
-
-// reqPerson------stores
-async function fetchAllDates() {
-  const fetchDatesQuery = `
-    SELECT dates
-    FROM date_day
-    ORDER BY dates ASC
-  `;
-  const datesResult = await get_database(fetchDatesQuery);
-  return datesResult.map(row => row.dates.toISOString().split('T')[0]);
-}
-
-async function isDateSetInDateDay(date) {
-  const formattedDate = date.toISOString().split('T')[0]; 
-
-  const checkDateSetQuery = `
-    SELECT COUNT(*)
-    FROM date_day
-    WHERE dates =?
-  `;
-  const countResult = await get_database(checkDateSetQuery, [formattedDate]);
-  console.log(`Count result for date ${date}:`, countResult); // Debugging log
-  return countResult[0]['COUNT(*)'] > 0;
-}
-
-async function findNextAvailableDate() {
-  const dates = await fetchAllDates(); 
-
-  let currentDate = new Date(); 
-  currentDate.setHours(0, 0, 0, 0);
-
-  while (true) {
-    currentDate.setDate(currentDate.getDate() + 1);
-    if (await isDateSetInDateDay(currentDate)) {
-    } else {
-      break;
-    }
+    res.json(taskstatus);
+  } catch (err) {
+    console.error("Error fetching Stores Task Status", err);
+    res.status(500).json({ error: "Error fetching Stores task status" });
   }
+};
 
-  return currentDate.toISOString().split('T')[0]; 
-}
+exports.update_stores_1 = async (req, res) => {
+  const id = req.query.id;
+  const purchase_order = req.body;
+  if (!id) {
+    return res.status(400).json({ error: "task id is required" });
+  }
+  try {
+    const query = `
+    UPDATE date_completion ,tasks
+    SET date_completion.stores_app_1 = CURRENT_TIMESTAMP,
+    tasks.status = '5' ,
+    tasks.purchase_order =?
+    WHERE task_id = ?
+    `;
+    await post_database(query, [id, purchase_order]);
+    res.json({ message: " stores 1 Tasks added successfully" });
+  } catch (err) {
+    console.error("Error updating  Stores 1");
+  }
+};
 
-exports.update_PersonTask_stores = async (req, res) => {
+exports.update_stores_2 = async (req, res) => {
   const id = req.query.id;
   if (!id) {
     return res.status(400).json({ error: "task id is required" });
   }
   try {
-    const nextAvailableDate = await findNextAvailableDate();
-    console.log(`Next available date: ${nextAvailableDate}`);
-
-    const updateTaskQuery = `
-    UPDATE tasks
-    SET status = '3',
-        st_from_date = DATE_ADD(DATE(?) , INTERVAL 9 HOUR),
-        st_due_date = DATE_ADD(DATE(?) + INTERVAL 9 HOUR, INTERVAL 9 HOUR),
-        rp_due_date = CURRENT_TIMESTAMP,
-        delayed_status = CASE WHEN CURRENT_TIMESTAMP > DATE_ADD(DATE(?) + INTERVAL 9 HOUR, INTERVAL 9 HOUR) THEN '1' ELSE delayed_status END
-    WHERE id = ?
-  `;
-    const success_message = await post_database(
-      updateTaskQuery,
-      [nextAvailableDate, nextAvailableDate, id],
-      "Req Person Updation Successful"
-    );
-    console.log(`Date set in tasks table: ${nextAvailableDate}`);
-    res.json({ message: success_message });
+    const query = `
+    UPDATE date_completion ,tasks
+    SET date_completion.stores_app_2 = CURRENT_TIMESTAMP,
+    tasks.status = '6' 
+    WHERE task_id = ?
+    `;
+    await post_database(query, [id]);
+    res.json({ message: " stores 2 Tasks added successfully" });
   } catch (err) {
-    console.error("Error updating ReqPerson status", err);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error("Error updating  Stores 2");
+  }
+};
+
+exports.update_stores_3 = async (req, res) => {
+  const id = req.query.id;
+  if (!id) {
+    return res.status(400).json({ error: "task id is required" });
+  }
+  try {
+    const query = `
+    UPDATE date_completion ,tasks
+    SET date_completion.stores_app_3 = CURRENT_TIMESTAMP,
+    tasks.status = '7' 
+    WHERE task_id = ?
+    `;
+    await post_database(query, [id]);
+    res.json({ message: " stores 3 Tasks added successfully" });
+  } catch (err) {
+    console.error("Error updating  Stores 3");
+  }
+};
+
+exports.update_stores_products = async (req, res) => {
+  const id = req.query.id;
+  if (!id) {
+    return res.status(400).json({ error: "task id is required" });
+  }
+  try {
+    const query = `
+    UPDATE date_completion ,tasks
+    SET date_completion.stores_app_products = CURRENT_TIMESTAMP,
+    tasks.status = '8' 
+    WHERE task_id = ?
+    `;
+    await post_database(query, [id]);
+    res.json({ message: " stores  Tasks added successfully" });
+  } catch (err) {
+    console.error("Error updating  Stores ");
+  }
+};
+
+exports.update_stores_bill = async (req, res) => {
+  const id = req.query.id;
+  if (!id) {
+    return res.status(400).json({ error: "task id is required" });
+  }
+  try {
+    const query = `
+    UPDATE date_completion ,tasks
+    SET date_completion.stores_status_bill = CURRENT_TIMESTAMP,
+    tasks.status = '10' 
+    WHERE task_id = ?
+    `;
+    await post_database(query, [id]);
+    res.json({ message: " stores bill Tasks added successfully" });
+  } catch (err) {
+    console.error("Error updating  Stores bill");
   }
 };
