@@ -15,7 +15,7 @@ exports.get_ReqPerson = async (req, res) => {
     INNER JOIN task_type
     ON tasks.task_type = task_type.id
      WHERE req_person =?
-     AND tasks.status = '1'||'5'||'7'||'10'
+     AND tasks.status IN ('5', '7', '10')
         `;
     const rperson = await get_database(query, [req_person]);
     res.json(rperson);
