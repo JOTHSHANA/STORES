@@ -26,6 +26,24 @@
     padding-bottom: 30px;
 }
 
+.repeating-box{
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content:space-between;
+    border-bottom: 1px solid gray;
+    flex-direction: column;
+    padding-top: 10px;
+    padding-bottom: 30px;
+    gap: 20px;
+}
+
+.all-repeating-fields{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
 .css-1t1j96h-MuiPaper-root-MuiDialog-paper{
     min-width: 60%;
 }

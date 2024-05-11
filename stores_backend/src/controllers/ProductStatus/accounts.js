@@ -3,13 +3,19 @@ const { get_database, post_database } = require("../../config/db_utils");
 exports.get_accounts = async (req, res) => {
   try {
     const query = `
-        SELECT  apex.apex_id, tasks.id,task_id,users.name , req_person, product_details, quantity, received_qty, task_date, tasks.status 
-        FROM tasks
-        INNER JOIN apex
-        ON tasks.apex_id = apex.id
-        INNER JOIN users
-        ON tasks.req_person = users.id
-         WHERE tasks.status IN ('2', '11')
+    SELECT apex.apex_id,apex.amount AS apex_amount,
+    tasks.task_id,users.name ,task_type.type,
+    req_person, product_details,purchase_order,ref_no, 
+    remaining_amount, quantity,received_qty, required_qty, 
+    tasks.amount, advance_amount, task_date, tasks.status 
+    FROM tasks
+    INNER JOIN apex
+    ON tasks.apex = apex.id
+    INNER JOIN users
+    ON tasks.req_person = users.id
+    INNER JOIN task_type
+    ON tasks.task_type = task_type.id
+     WHERE tasks.status IN ('2', '11')
          
         `;
     const account = await get_database(query);

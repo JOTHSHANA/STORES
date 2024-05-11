@@ -16,7 +16,7 @@ exports.get_stores = async (req, res) => {
     ON tasks.req_person = users.id
     INNER JOIN task_type
     ON tasks.task_type = task_type.id
-     WHERE tasks.status IN ('4', '9')
+    WHERE tasks.status IN ('4','5','6','7','8','9','10')
      
     `;
     const taskstatus = await get_database(query);
@@ -127,6 +127,26 @@ exports.update_stores_bill = async (req, res) => {
     `;
     await post_database(query, [id]);
     res.json({ message: " stores bill Tasks added successfully" });
+  } catch (err) {
+    console.error("Error updating  Stores bill");
+  }
+};
+
+
+exports.update_stores_sent_bill = async (req, res) => {
+  const id = req.query.id;
+  if (!id) {
+    return res.status(400).json({ error: "task id is required" });
+  }
+  try {
+    const query = `
+    UPDATE date_completion ,tasks
+    SET date_completion.stores_status_sent__bill = CURRENT_TIMESTAMP,
+    tasks.status = '11' 
+    WHERE task_id = ?
+    `;
+    await post_database(query, [id]);
+    res.json({ message: " stores bill sent Tasks added successfully" });
   } catch (err) {
     console.error("Error updating  Stores bill");
   }

@@ -1,16 +1,16 @@
 const { get_database, post_database } = require("../../config/db_utils");
 
 exports.get_apex = async (req, res) => {
-  const user = req.body;
+  const user = req.query;
   if (!user) {
     return res.status(400).json({ error: "User id is required" });
   }
   try {
     const query = `
-        SELECT id, apex_id, user
-        FROM apex
-        WHERE user = ?
-        status IN ('1')
+    SELECT id, apex_id AS apex
+    FROM apex
+    WHERE user = ?
+    AND status = '1'
         `;
     const apex = await get_database(query, [user]);
     res.json(apex);

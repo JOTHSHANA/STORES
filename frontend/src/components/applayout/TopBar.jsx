@@ -4,6 +4,7 @@ import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Button from "../Button/Button";
+import QueryStatsTwoToneIcon from '@mui/icons-material/QueryStatsTwoTone';
 
 function TopBar(props) {
   const [modalOpen, setModalOpen] = useState(false);
@@ -40,7 +41,7 @@ function TopBar(props) {
         <div onClick={props.sidebar} className="sidebar-menu">
           <MenuRoundedIcon sx={{ color: "#472d2d",cursor:"pointer" }} />
         </div>
-        <div className="app-name">STORES</div>
+        <div className="app-name"><QueryStatsTwoToneIcon sx={{fontSize:"30px", color:"#1c0c6a"}}/>TRACKING</div>
       </div>
       <div className="topbar-right-content">
         

@@ -14,10 +14,15 @@ function TaskForm() {
     const [amount, setAmount] = useState(0);
     const [advancePayment, setAdvancePayment] = useState("");
     const [advanceAmount, setAdvanceAmount] = useState(0);
+    const [apexOptions, setApexOptions] = useState([]);
+    const [selectedApexId, setSelectedApexId] = useState("");
+    const [additionalFields, setAdditionalFields] = useState([]); // State to store additional fields
+
     const req_id = Cookies.get('id');
 
     useEffect(() => {
         fetchTaskTypes();
+        fetchApex();
     }, []);
 
     const fetchTaskTypes = async () => {
@@ -29,18 +34,30 @@ function TaskForm() {
         }
     };
 
+    const fetchApex = async () => {
+        try {
+            const response = await requestApi('GET', `/status/apex?user=${req_id}`);
+            setApexOptions(response.data);
+        } catch (error) {
+            console.error('Error fetching Apex options:', error);
+        }
+    };
+
+    const handleApexSelect = (id) => {
+        setSelectedApexId(id);
+    };
+
     const handleSubmit = async (event) => {
         event.preventDefault();
         const formData = {
+            apex_id: selectedApexId,
             task_type: task_type,
             product_details: product_details,
             quantity: parseInt(quantity),
             amount: parseInt(amount),
             advance_amount: parseInt(advanceAmount),
-            req_person:req_id
+            req_person: req_id
         };
-
-        console.log(formData)
 
         try {
             const response = await requestApi('POST', '/status/req-person', formData);
@@ -66,11 +83,37 @@ function TaskForm() {
         setAdvancePayment('');
         setAdvanceAmount(0);
         setAmount(0);
+        setAdditionalFields([]); // Clear additional fields
+    };
+
+    const handleAddField = () => {
+        const newField = { name: '', quantity: '', expectedPrice: '', total: 0 };
+        setAdditionalFields([...additionalFields, newField]);
+    };
+
+    const handleAdditionalFieldChange = (index, field, value) => {
+        const updatedFields = [...additionalFields];
+        updatedFields[index][field] = value;
+        if (field === 'quantity' || field === 'expectedPrice') {
+            updatedFields[index].total = parseInt(updatedFields[index].quantity) * parseFloat(updatedFields[index].expectedPrice);
+        }
+        setAdditionalFields(updatedFields);
     };
 
     return (
         <div className="form-div">
             <form className="form" onSubmit={handleSubmit}>
+
+            <div className="each-field">
+                    <label className="form-label" htmlFor="apex">Apex:<span className="required">*</span></label>
+                    <select className="form-input-select" name="apex" value={selectedApexId} id="apex" onChange={(e) => handleApexSelect(e.target.value)} required>
+                        <option value="">Select Apex</option>
+                        {apexOptions.map((apex, index) => (
+                            <option key={index} value={apex.id}>{apex.apex}</option>
+                        ))}
+                    </select>
+                </div>
+                
                 <div className="each-field">
                     <label className="form-label" htmlFor="taskid">Task type:<span className="required">*</span></label>
                     <select className="form-input-select" name="task-type" value={task_type} id="tasktype" onChange={(e) => setTaskType(e.target.value)} required>
@@ -80,6 +123,9 @@ function TaskForm() {
                         ))}
                     </select>
                 </div>
+
+                {/* Apex selection field */}
+                
 
                 <div className="each-field">
                     <label className="form-label" htmlFor="product_details">Product Details:<span className="required">*</span></label>
@@ -110,6 +156,37 @@ function TaskForm() {
                 <div className="each-field">
                     <label className="form-label" htmlFor="quantity">Quantity:<span className="required">*</span></label>
                     <input className="form-input" type="number" name="quantity" value={quantity} onChange={(e) => setQuantity(e.target.value)} required />
+                </div>
+
+                {/* Additional fields */}
+                {additionalFields.map((field, index) => (
+                    <div key={index}>
+
+                        <h3 style={{marginTop:"20px", marginBottom:"0px"}}>Product: {index+1}</h3>
+                        <div className='repeating-box'>
+                            <div className='all-repeating-fields'>
+                                <label className="form-label" htmlFor={`productName-${index}`}>Product Name:</label>
+                                <input className="form-input" type="text" id={`productName-${index}`} value={field.name} onChange={(e) => handleAdditionalFieldChange(index, 'name', e.target.value)} />
+                            </div>
+                            <div className='all-repeating-fields'>
+                                <label className="form-label" htmlFor={`quantity-${index}`}>Quantity:</label>
+                                <input className="form-input" type="number" id={`quantity-${index}`} value={field.quantity} onChange={(e) => handleAdditionalFieldChange(index, 'quantity', e.target.value)} />
+                            </div>
+                            <div className='all-repeating-fields'>
+                                <label className="form-label" htmlFor={`expectedPrice-${index}`}>Expected Price:</label>
+                                <input className="form-input" type="number" id={`expectedPrice-${index}`} value={field.expectedPrice} onChange={(e) => handleAdditionalFieldChange(index, 'expectedPrice', e.target.value)} />
+                            </div>
+                            <div className='all-repeating-fields'>
+                                <label className="form-label">Total:</label>
+                                <input className="form-input" type="text" value={field.total} disabled />
+                            </div>
+                        </div>
+
+
+                    </div>
+                ))}
+                <div className="each-field1" onClick={handleAddField}>
+                    adddd
                 </div>
 
                 <div className="each-field1">

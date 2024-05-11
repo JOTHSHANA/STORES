@@ -26,24 +26,52 @@ function Body() {
     const [openTaskForm, setOpenTaskForm] = useState(false); // State for TaskForm dialog
     const [receivedQty, setReceivedQty] = useState(0); // State to store received_qty
     const id = Cookies.get('id');
+    const [showAdditionalButtons, setShowAdditionalButtons] = useState(false);
+    const [showInput, setShowInput] = useState(false)
+    const [advance, setAdvance] = useState()
+    const [purchaseOrderNum, setPurchaceOrderNum] = useState();
+
+
 
     useEffect(() => {
         fetchTaskData();
-    }, []);
+    }, [id]);
 
     const fetchTaskData = async () => {
         try {
-            const response = await requestApi("GET", `/status/req-person?req_person=${id}`);
+            const role_id = Cookies.get('role');
+            let apiEndpoint = "";
+
+            // Determine API endpoint based on role_id
+            switch (role_id) {
+                case '1':
+                    apiEndpoint = `/status/req-person?req_person=${id}`;
+                    break;
+                case '4':
+                    apiEndpoint = "/status/stores";
+                    break;
+                case '5':
+                    apiEndpoint = "/status/pteam";
+                    break;
+
+                case '6':
+                    apiEndpoint = "/status/accounts";
+                    break;
+                default:
+                    throw new Error("Invalid role ID");
+            }
+
+            const response = await requestApi("GET", apiEndpoint);
             if (!response.data || !response.success) {
                 throw new Error('Failed to fetch task data');
             }
-            console.log(response)
             const data = response.data;
             setTaskData(data);
         } catch (error) {
             console.error('Error fetching task data:', error);
         }
     };
+
 
     const handleClickOpen = (task) => {
         setSelectedTask(task);
@@ -63,17 +91,20 @@ function Body() {
     };
 
     const handleIntimateFaculty = async () => {
+        console.log(selectedTask.task_id)
         try {
             if (!selectedTask) {
                 throw new Error('No task selected');
             }
             // Update the values id and received_qty via /status/pteam-person
-            const response = await requestApi("PUT", `/status/pteam-person?id=${selectedTask.id}`, {
+            const response = await requestApi("PUT", `/status/person-advance?id=${selectedTask.task_id}`, {
                 received_qty: receivedQty // Use the state receivedQty
             });
             console.log(response);
             // Close the dialog after successful update
             setOpen(false);
+            fetchTaskData();
+
         } catch (error) {
             console.error('Error updating values:', error);
         }
@@ -84,18 +115,189 @@ function Body() {
             if (!selectedTask) {
                 throw new Error('No task selected');
             }
-            // Send only the id to backend via /status/pteam-stores
-            const response = await requestApi("PUT", `/status/pteam-stores?id=${selectedTask.id}`);
+            const response = await requestApi("PUT", `/status/person-stores?id=${selectedTask.task_id}`);
             console.log(response);
-            // Close the dialog after successful update
             setOpen(false);
+            fetchTaskData();
         } catch (error) {
             console.error('Error sending id to backend:', error);
         }
     };
 
+    const handleUpdateAcc = async () => {
+        try {
+            if (!selectedTask) {
+                throw new Error('No task selected');
+            }
+            const response = await requestApi("PUT", `/status/req-accounts?id=${selectedTask.task_id}`);
+            console.log(response);
+            setOpen(false);
+            fetchTaskData();
+        } catch (error) {
+            console.error('Error sending id to backend:', error);
+        }
+    };
+
+    const handleBillStatus = async () => {
+        try {
+            if (!selectedTask) {
+                throw new Error('No task selected');
+            }
+            const response = await requestApi("PUT", `/status/pteam-close?id=${selectedTask.task_id}`);
+            console.log(response);
+            setOpen(false);
+            fetchTaskData();
+        } catch (error) {
+            console.error('Error sending id to backend:', error);
+        }
+    };
+
+    const handleQuotationPass = async () => {
+        console.log(selectedTask.task_id);
+        try {
+            if (!selectedTask) {
+                throw new Error('No task selected');
+            }
+            const response = await requestApi("PUT", `/status/stores-1?id=${selectedTask.task_id}`, {
+                purchase_order: purchaseOrderNum
+            });
+            console.log(response);
+            setOpen(false);
+            fetchTaskData();
+        } catch (error) {
+            console.error('Error sending id to backend:', error);
+        }
+    };
+
+
+    const handlePurchaseOrder = async () => {
+
+        try {
+            if (!selectedTask) {
+                throw new Error('No task selected');
+            }
+            const response = await requestApi("PUT", `/status/stores-2?id=${selectedTask.task_id}`);
+            console.log(response);
+            setOpen(false);
+            fetchTaskData();
+        } catch (error) {
+            console.error('Error sending id to backend:', error);
+        }
+    };
+
+    const handletemp = async () => {
+
+        try {
+            if (!selectedTask) {
+                throw new Error('No task selected');
+            }
+            const response = await requestApi("PUT", `/status/stores-3?id=${selectedTask.task_id}`);
+            console.log(response);
+            setOpen(false);
+            fetchTaskData();
+        } catch (error) {
+            console.error('Error sending id to backend:', error);
+        }
+    };
+
+    const handlefullyreceived = async () => {
+
+        try {
+            if (!selectedTask) {
+                throw new Error('No task selected');
+            }
+            const response = await requestApi("PUT", `/status/stores-products?id=${selectedTask.task_id}`);
+            console.log(response);
+            setOpen(false);
+            fetchTaskData();
+        } catch (error) {
+            console.error('Error sending id to backend:', error);
+        }
+    };
+
+
+    const handlebillreceived = async () => {
+
+        try {
+            if (!selectedTask) {
+                throw new Error('No task selected');
+            }
+            const response = await requestApi("PUT", `/status/stores-bill?id=${selectedTask.task_id}`);
+            console.log(response);
+            setOpen(false);
+            fetchTaskData();
+        } catch (error) {
+            console.error('Error sending id to backend:', error);
+        }
+    };
+
+    const handleBillSent = async () => {
+
+        try {
+            if (!selectedTask) {
+                throw new Error('No task selected');
+            }
+            const response = await requestApi("PUT", `/status/stores-sent?id=${selectedTask.task_id}`);
+            console.log(response);
+            setOpen(false);
+            fetchTaskData();
+        } catch (error) {
+            console.error('Error sending id to backend:', error);
+        }
+    };
+
+    const handleAdvancePaid = async () => {
+
+        try {
+            if (!selectedTask) {
+                throw new Error('No task selected');
+            }
+            const response = await requestApi("PUT", `/status/accounts-advance?id=${selectedTask.task_id}`);
+            console.log(response);
+            setOpen(false);
+            fetchTaskData();
+        } catch (error) {
+            console.error('Error sending id to backend:', error);
+        }
+    };
+
+    const handleFinalPayment = async () => {
+
+        try {
+            if (!selectedTask) {
+                throw new Error('No task selected');
+            }
+            const response = await requestApi("PUT", `/status/accounts-pay?id=${selectedTask.task_id}`);
+            console.log(response);
+            setOpen(false);
+            fetchTaskData();
+        } catch (error) {
+            console.error('Error sending id to backend:', error);
+        }
+    };
+
+
+
+
     const handleReceivedQtyChange = (event) => {
         setReceivedQty(event.target.value);
+    };
+
+    const handleApproveClick = () => {
+        console.log("afuvbubfuavaeffe")
+        setShowAdditionalButtons(true); // Toggle the visibility of additional buttons
+
+    };
+    const handleShowInput = () => {
+        setShowInput(true)
+    }
+
+    const handleAdvanceNeededYesClick = async () => {
+        // Handle logic when "Advance needed: Yes" button is clicked
+    };
+
+    const handleAdvanceNeededNoClick = async () => {
+        // Handle logic when "Advance needed: No" button is clicked
     };
 
     const steps = ['INITIATED',
@@ -124,7 +326,27 @@ function Body() {
                         <Box sx={{ width: '100%' }}>
                             <Stepper activeStep={3} alternativeLabel>
                                 {steps.map((label) => (
-                                    <Step key={label}>
+                                    <Step key={label}
+                                    //  sx={{
+                                    //     '& .MuiStepLabel-root .Mui-completed': {
+                                    //       color: 'secondary.dark', // circle color (COMPLETED)
+                                    //     },
+                                    //     '& .MuiStepLabel-label.Mui-completed.MuiStepLabel-alternativeLabel':
+                                    //       {
+                                    //         color: 'grey.500', // Just text label (COMPLETED)
+                                    //       },
+                                    //     '& .MuiStepLabel-root .Mui-active': {
+                                    //       color: 'secondary.main', // circle color (ACTIVE)
+                                    //     },
+                                    //     '& .MuiStepLabel-label.Mui-active.MuiStepLabel-alternativeLabel':
+                                    //       {
+                                    //         color: 'common.white', // Just text label (ACTIVE)
+                                    //       },
+                                    //     '& .MuiStepLabel-root .Mui-active .MuiStepIcon-text': {
+                                    //       fill: 'black', // circle's number (ACTIVE)
+                                    //     },
+                                    //   }}
+                                    >
                                         <StepLabel>{label}</StepLabel>
                                     </Step>
                                 ))}
@@ -173,22 +395,27 @@ function Body() {
                                         ))}
                                     </Stepper>
                                 </Box>
-                                {selectedTask.status == 5 && (
+
+
+                                {/* request person */}
+
+
+                                {selectedTask.status == 3 && (
                                     <div className="popup-button-flex">
                                         <DialogContent dividers>
                                             <div className="status-update-button">
                                                 Advance given?
-                                                <div>
-                                                    <input type="text" name="received_qty" value={receivedQty} onChange={handleReceivedQtyChange} />
-                                                </div>
+
                                                 <Button label="Advance Done" onClick={handleIntimateFaculty} />
+                                                {/* <Button label="Advance Done" onClick={handleIntimateFaculty} /> */}
+
                                             </div>
                                         </DialogContent>
 
 
                                     </div>
                                 )}
-                                {selectedTask.status == 7 && (
+                                {selectedTask.status == 8 && (
                                     <div className="popup-button-flex">
                                         <DialogContent dividers>
                                             <div className="status-update-button">
@@ -199,17 +426,158 @@ function Body() {
                                     </div>
                                 )}
 
-                                {selectedTask.status == 10 && (
+                                {selectedTask.status == 12 && (
                                     <div className="popup-button-flex">
                                         <DialogContent dividers>
                                             <div className="status-update-button">
                                                 Bill paid by accounts?
-                                                <Button label="Bill Paid" />
+                                                <Button label="Bill Paid" onClick={handleUpdateAcc} />
                                             </div>
 
                                         </DialogContent>
                                     </div>
                                 )}
+
+
+                                {/* purchase team */}
+
+
+                                {selectedTask.status == 1 && (
+                                    <div className="popup-button-flex">
+                                        <DialogContent dividers>
+                                            <div className="status-update-button">
+                                                Approve
+                                                <Button label="Approve" onClick={handleApproveClick} />
+                                            </div>
+                                            {showAdditionalButtons && (
+                                                <div className="popup-button-flex">
+                                                    <DialogContent dividers>
+                                                        <div className="status-update-button">
+                                                            Advance needed?
+                                                            <Button label="Yes" onClick={handleShowInput} />
+                                                            <Button label="No" />
+
+                                                        </div>
+
+                                                        {showInput && (
+                                                            <div>
+                                                                <input type="number" value={advance} onChange={(e) => setAdvance(e.target.value)} />
+                                                            </div>
+                                                        )}
+                                                    </DialogContent>
+                                                </div>
+                                            )}
+                                        </DialogContent>
+                                    </div>
+                                )}
+
+                                {selectedTask.status == 13 && (
+                                    <div className="popup-button-flex">
+                                        <DialogContent dividers>
+                                            <div className="status-update-button">
+                                                Bill closed?
+                                                <Button label="Bill closed" onClick={handleBillStatus} />
+                                            </div>
+                                        </DialogContent>
+                                    </div>
+                                )}
+
+                                {/* stores */}
+
+
+                                {selectedTask.status == 4 && (
+                                    <div className="popup-button-flex">
+                                        <DialogContent dividers>
+                                            <div className="status-update-button">
+                                                Quotation passed
+                                                <input type="text" placeholder="purchase order number" value={purchaseOrderNum} onChange={(e) => setPurchaceOrderNum(e.target.value)} />
+                                                <Button label="Quotation passed" onClick={handleQuotationPass} />
+                                            </div>
+                                        </DialogContent>
+                                    </div>
+                                )}                             {/*not working*/}
+
+                                {selectedTask.status == 5 && (
+                                    <div className="popup-button-flex">
+                                        <DialogContent dividers>
+                                            <div className="status-update-button">
+                                                purchase order
+                                                <Button label="Purchase passed" onClick={handlePurchaseOrder} />
+                                            </div>
+                                        </DialogContent>
+                                    </div>
+                                )}                          {/*working*/}
+
+                                {selectedTask.status == 6 && (
+                                    <div className="popup-button-flex">
+                                        <DialogContent dividers>
+                                            <div className="status-update-button">
+                                                temp
+                                                <Button label="Temp" onClick={handletemp} />
+                                            </div>
+                                        </DialogContent>
+                                    </div>
+                                )}                               {/*working*/}
+
+                                {selectedTask.status == 7 && (
+                                    <div className="popup-button-flex">
+                                        <DialogContent dividers>
+                                            <div className="status-update-button">
+                                                Full Product received?
+                                                <Button label="Received" onClick={handlefullyreceived} />
+                                            </div>
+                                        </DialogContent>
+                                    </div>
+                                )}                                {/*working*/}
+
+                                {selectedTask.status == 9 && (
+                                    <div className="popup-button-flex">
+                                        <DialogContent dividers>
+                                            <div className="status-update-button">
+                                                received bill from request person?
+                                                <Button label="Received bill" onClick={handlebillreceived} />
+                                            </div>
+                                        </DialogContent>
+                                    </div>
+                                )}                               {/*working*/}
+
+                                {selectedTask.status == 10 && (
+                                    <div className="popup-button-flex">
+                                        <DialogContent dividers>
+                                            <div className="status-update-button">
+                                                bill sent to accounts?
+                                                <Button label="Sent" onClick={handleBillSent} />
+                                            </div>
+                                        </DialogContent>                 {/* not working*/}
+                                    </div>
+                                )}
+
+
+                                {/* advances */}
+
+                                {selectedTask.status == 2 && (
+                                    <div className="popup-button-flex">
+                                        <DialogContent dividers>
+                                            <div className="status-update-button">
+                                                Advance Paid?
+                                                <Button label="Sent" onClick={handleAdvancePaid} />
+                                            </div>
+                                        </DialogContent>
+                                    </div>
+                                )}                             {/*not working*/}
+
+                                {selectedTask.status == 11 && (
+                                    <div className="popup-button-flex">
+                                        <DialogContent dividers>
+                                            <div className="status-update-button">
+                                                Final amount Paid?
+                                                <Button label="Sent" onClick={handleFinalPayment} />
+                                            </div>
+                                        </DialogContent>
+                                    </div>
+                                )}                             {/*working*/}
+
+
                             </div>
                         )}
                     </DialogContentText>

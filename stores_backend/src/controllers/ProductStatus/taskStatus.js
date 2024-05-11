@@ -6,7 +6,7 @@ exports.get_Taskstatus = async (req, res) => {
     SELECT apex.apex_id, apex.amount AS apex_amount,tasks.task_id,users.name,task_type.type, req_person, product_details, quantity, tasks.amount, advance_amount, task_date, tasks.status 
     FROM tasks
     INNER JOIN apex
-    ON tasks.apex_id ON apex.id
+    ON tasks.apex = apex.id
     INNER JOIN users
     ON tasks.req_person = users.id
     INNER JOIN task_type
