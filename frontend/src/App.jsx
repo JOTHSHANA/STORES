@@ -10,8 +10,8 @@ import Error from "./allpages/error";
 import Holidays from "./allpages/Holidays/Holidays";
 import MyTasks from "./allpages/WorkSpace/Mytasks";
 import Approvals from "./allpages/Approvals/Approvals";
-import History from "./allpages/History/history";
 import Explore from "./allpages/Explore/Explore";
+import history from "./allpages/History/history";
 function App() {
   return (
     <>
@@ -27,8 +27,8 @@ function App() {
           <Route path="/mytasks" element={<MyTasks />} />
           <Route path="/holidays" element={<Holidays />} />
           <Route path="/approvals" element={<Approvals />} />
-          <Route path="/history" element={<History />} />
           <Route path="/explore" element={<Explore />} />
+
 
         </Routes>
       </BrowserRouter>

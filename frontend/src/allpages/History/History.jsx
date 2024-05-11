@@ -1,7 +1,7 @@
 import AppLayout from "../../components/applayout/AppLayout";
 import "../../components/applayout/styles.css";
-import RoleCheck from "../auth/RoleResource/resources";
 
+import Button from "../../components/Button/Button";
 
 function History() {
     return <AppLayout rId={2} body={<Body />} />;
@@ -16,6 +16,6 @@ function Body() {
     );
 }
 
-export default RoleCheck(History,[1,2, 3, 4, 5, 6]);
+export default History;
 
 

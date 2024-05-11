@@ -6,9 +6,9 @@ exports.get_pteam = async (req, res) => {
     const query = `
     SELECT apex.apex_id,apex.amount AS apex_amount,
     tasks.task_id,users.name ,task_type.type,
-    req_person, product_details,purchase_order,ref_no, 
-    remaining_amount, quantity,received_qty, required_qty, 
-    tasks.amount, advance_amount, task_date, tasks.status 
+    req_person, product_details,purchase_order,ref_no,
+    remaining_amount, quantity,received_qty, required_qty,
+    tasks.amount, advance_amount, task_date, tasks.status
     FROM tasks
     INNER JOIN apex
     ON tasks.apex = apex.id
@@ -16,7 +16,7 @@ exports.get_pteam = async (req, res) => {
     ON tasks.req_person = users.id
     INNER JOIN task_type
     ON tasks.task_type = task_type.id
-     WHERE tasks.status IN ('1', '13', '18') 
+     WHERE tasks.status IN ('1', '13', '18')
     `;
     const taskstatus = await get_database(query);
     const formatDate = (dateString) => {

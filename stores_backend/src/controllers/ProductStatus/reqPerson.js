@@ -147,7 +147,7 @@ exports.update_advance = async (req, res) => {
     const query = `
     UPDATE date_completion ,tasks
     SET date_completion.rp_app_advance = CURRENT_TIMESTAMP,
-    tasks.status = '4' 
+    tasks.status = '4'
     WHERE date_completion.task = ?
     `;
     await post_database(query, [id]);
@@ -166,7 +166,7 @@ exports.update_stores = async (req, res) => {
     const query = `
     UPDATE date_completion ,tasks
     SET date_completion.rp_app_stores = CURRENT_TIMESTAMP,
-    tasks.status = '9' 
+    tasks.status = '9'
     WHERE date_completion.task = ?
     `;
     await post_database(query, [id]);
@@ -185,7 +185,7 @@ exports.update_par_stores = async (req, res) => {
     const query = `
     UPDATE date_completion ,tasks
     SET date_completion.par_rp_app_stores = CURRENT_TIMESTAMP,
-    tasks.status = '16' 
+    tasks.status = '16'
     WHERE date_completion.task = ?
     `;
     await post_database(query, [id]);
@@ -204,7 +204,7 @@ exports.update_accounts = async (req, res) => {
     const query = `
     UPDATE date_completion ,tasks
     SET date_completion.rp_app_acc = CURRENT_TIMESTAMP,
-    tasks.status = '13' 
+    tasks.status = '13'
     WHERE date_completion.task = ?
     `;
     await post_database(query, [id]);
@@ -223,7 +223,7 @@ exports.update_par_accounts = async (req, res) => {
     const query = `
     UPDATE date_completion ,tasks
     SET date_completion.par_rp_app_acc = CURRENT_TIMESTAMP,
-    tasks.status = '18' 
+    tasks.status = '18'
     WHERE date_completion.task = ?
     `;
     await post_database(query, [id]);

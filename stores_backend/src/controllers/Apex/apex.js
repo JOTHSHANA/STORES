@@ -7,10 +7,17 @@ exports.get_apex = async (req, res) => {
   }
   try {
     const query = `
+<<<<<<< HEAD
         SELECT id, apex_id AS apex
         FROM apex
         WHERE user = ?
         AND status = '1'
+=======
+    SELECT id, apex_id AS apex
+    FROM apex
+    WHERE user = ?
+    AND status = '1'
+>>>>>>> df9abd8f385af84998e4c61b6cc72cb3dfa857ba
         `;
     const apex = await get_database(query, [user]);
     res.json(apex);

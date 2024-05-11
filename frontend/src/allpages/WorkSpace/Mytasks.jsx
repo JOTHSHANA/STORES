@@ -135,7 +135,7 @@ function Body() {
                     </div>
                 ))}
             </div>
-            <div className="add-form-icon"><AddCircleOutlinedIcon className="add-form-icon" style={{fontSize:"70", color:"rgb(16, 190, 94)"}} onClick={handleTaskFormOpen}/></div>
+            <div className="add-form-icon"><AddCircleOutlinedIcon className="add-form-icon" style={{ fontSize: "70", color: "#493d88" }} onClick={handleTaskFormOpen} /></div>
             <Dialog
                 open={open}
                 onClose={handleClose}
@@ -182,7 +182,7 @@ function Body() {
                                             <div className="status-update-button">
                                                 Products delivered?
                                                 <div>
-                                                    <input type="text" name="received_qty" value={receivedQty} onChange={handleReceivedQtyChange}/>
+                                                    <input type="text" name="received_qty" value={receivedQty} onChange={handleReceivedQtyChange} />
                                                 </div>
                                                 <Button label="Intimate Faculty" onClick={handleIntimateFaculty} />
                                             </div>
@@ -225,7 +225,7 @@ function Body() {
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleTaskFormClose} label="Close" />
-                </DialogActions>  
+                </DialogActions>
             </Dialog>
         </div>
     );
