@@ -1,4 +1,5 @@
 import AppLayout from "../../components/applayout/AppLayout";
+import RoleCheck from "../auth/RoleResource/resources";
 import './Holidays.css'
 import Button from "../../components/Button/Button";
 import React, { useState, useEffect } from "react";
@@ -100,4 +101,4 @@ function Body() {
     );
 }
 
-export default Holidays;
+export default RoleCheck(Holidays,[2, 3, 6]);

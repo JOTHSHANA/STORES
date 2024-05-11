@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import requestApi from '../../components/utils/axios';
+import RoleCheck from '../auth/RoleResource/resources';
 import AppLayout from '../../components/applayout/AppLayout';
 import Button from '../../components/Button/Button';
 import Cookies from "js-cookie";
@@ -121,4 +122,4 @@ function TaskForm() {
     );
 }
 
-export default TaskForm;
+export default RoleCheck(TaskForm[1, 2, 3]);

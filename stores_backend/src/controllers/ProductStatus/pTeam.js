@@ -42,9 +42,9 @@ exports.update_advance_pteam = async (req, res) => {
   try {
     const query = `
     UPDATE date_completion, tasks
-    SET date_completion.pteam_app = CURRENT_TIMESTAMP
-    AND tasks.status = '2'
-    WHERE tasks.task_id = ?
+    SET date_completion.pteam_app = CURRENT_TIMESTAMP,
+    tasks.status = '2'
+    WHERE date_completion.task = ?
 
     `;
     await post_database(query, [id]);
@@ -62,9 +62,9 @@ exports.update_pteam = async (req, res) => {
   try {
     const query = `
     UPDATE date_completion, tasks
-    SET date_completion.pteam_app = CURRENT_TIMESTAMP
-    AND tasks.status = '3'
-    WHERE tasks.task_id = ?
+    SET date_completion.pteam_app = CURRENT_TIMESTAMP,
+    tasks.status = '3'
+    WHERE date_completion.task = ?
 
     `;
     await post_database(query, [id]);
@@ -75,16 +75,16 @@ exports.update_pteam = async (req, res) => {
 };
 
 exports.update_Close_PurchaseBill = async (req, res) => {
-  const id = req.query;
+  const id = req.query.id;
   if (!id) {
     return res.status(400).json({ error: "task is required" });
   }
   try {
     const query = `
     UPDATE date_completion, tasks
-    SET date_completion.pteam_task_close = CURRENT_TIMESTAMP
-    AND tasks.status = '14'
-    WHERE tasks.task_id = ?
+    SET date_completion.pteam_task_close = CURRENT_TIMESTAMP,
+    tasks.status = '14'
+    WHERE date_completion.task = ?
 
     `;
     await post_database(query, [id]);
@@ -102,10 +102,9 @@ exports.update_Partial_PurchaseBill = async (req, res) => {
   try {
     const query = `
     UPDATE date_completion, tasks
-    SET date_completion.pteam_task_close = CURRENT_TIMESTAMP
-    AND tasks.status = '20'
-    WHERE tasks.task_id = ?
-
+    SET date_completion.pteam_par_task_close = CURRENT_TIMESTAMP,
+    tasks.status = '20'
+    WHERE date_completion.task = ?
     `;
     await post_database(query, [id]);
     res.json({ message: "PTeam Partail updated successfull" });

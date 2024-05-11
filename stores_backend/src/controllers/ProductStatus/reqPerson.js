@@ -8,7 +8,7 @@ exports.get_ReqPerson = async (req, res) => {
   try {
     const query = `
     SELECT apex.apex_id,apex.amount AS apex_amount,
-    tasks.task_id,users.name ,task_type.type,
+    tasks.task_id,users.name,users.role_id,task_type.type,
     req_person, product_details,purchase_order,ref_no, 
     remaining_amount, quantity,received_qty, required_qty, 
     tasks.amount, advance_amount, task_date, tasks.status 
@@ -22,6 +22,13 @@ exports.get_ReqPerson = async (req, res) => {
     WHERE req_person =?
      `;
     const rperson = await get_database(query, [req_person]);
+    const formatDate = (dateString) => {
+      const date = new Date(dateString);
+      return date.toLocaleDateString() + "  " + date.toLocaleTimeString();
+    };
+    rperson.forEach((rp) => {
+      rp.task_date = formatDate(rp.task_date);
+    });
     res.json(rperson);
   } catch (err) {
     console.error("Error fetching Task Status", err);
@@ -36,18 +43,29 @@ exports.get_App_ReqPerson = async (req, res) => {
   }
   try {
     const query = `
-    SELECT apex.apex_id tasks.task_id,users.name ,task_type.type, req_person, product_details, quantity, amount, advance_amount, task_date, tasks.status 
+    SELECT apex.apex_id,apex.amount AS apex_amount,
+    tasks.task_id,users.name ,task_type.type,
+    req_person, product_details,purchase_order,ref_no, 
+    remaining_amount, quantity,received_qty, required_qty, 
+    tasks.amount, advance_amount, task_date, tasks.status 
     FROM tasks
     INNER JOIN apex
-    ON tasks.apex_id = apex.id
+    ON tasks.apex = apex.id
     INNER JOIN users
     ON tasks.req_person = users.id
     INNER JOIN task_type
     ON tasks.task_type = task_type.id
-     WHERE req_person =?
+    WHERE req_person =?
      AND tasks.status IN ('3', '8', '12')
         `;
     const rperson = await get_database(query, [req_person]);
+    const formatDate = (dateString) => {
+      const date = new Date(dateString);
+      return date.toLocaleDateString() + "  " + date.toLocaleTimeString();
+    };
+    rperson.forEach((rp) => {
+      rp.task_date = formatDate(rp.task_date);
+    });
     res.json(rperson);
   } catch (err) {
     console.error("Error fetching Task Status", err);
@@ -81,7 +99,7 @@ exports.post_ReqPerson = async (req, res) => {
 
   try {
     const taskInsertQuery = `
-      INSERT INTO tasks (apex_id, req_person, task_type, product_details, amount, advance_amount, quantity, task_date)
+      INSERT INTO tasks (apex, req_person, task_type, product_details, amount, advance_amount, quantity, task_date)
       VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP);
     `;
     await post_database(taskInsertQuery, [
@@ -130,7 +148,7 @@ exports.update_advance = async (req, res) => {
     UPDATE date_completion ,tasks
     SET date_completion.rp_app_advance = CURRENT_TIMESTAMP,
     tasks.status = '4' 
-    WHERE task_id = ?
+    WHERE date_completion.task = ?
     `;
     await post_database(query, [id]);
     res.json({ message: "req_person Advance Tasks added successfully" });
@@ -149,7 +167,7 @@ exports.update_stores = async (req, res) => {
     UPDATE date_completion ,tasks
     SET date_completion.rp_app_stores = CURRENT_TIMESTAMP,
     tasks.status = '9' 
-    WHERE task_id = ?
+    WHERE date_completion.task = ?
     `;
     await post_database(query, [id]);
     res.json({ message: "Req_person stores Tasks added successfully" });
@@ -168,7 +186,7 @@ exports.update_par_stores = async (req, res) => {
     UPDATE date_completion ,tasks
     SET date_completion.par_rp_app_stores = CURRENT_TIMESTAMP,
     tasks.status = '16' 
-    WHERE task_id = ?
+    WHERE date_completion.task = ?
     `;
     await post_database(query, [id]);
     res.json({ message: "Req_person stores Tasks added successfully" });
@@ -187,7 +205,7 @@ exports.update_accounts = async (req, res) => {
     UPDATE date_completion ,tasks
     SET date_completion.rp_app_acc = CURRENT_TIMESTAMP,
     tasks.status = '13' 
-    WHERE task_id = ?
+    WHERE date_completion.task = ?
     `;
     await post_database(query, [id]);
     res.json({ message: "Req_person accounts Tasks added successfully" });
@@ -206,11 +224,49 @@ exports.update_par_accounts = async (req, res) => {
     UPDATE date_completion ,tasks
     SET date_completion.par_rp_app_acc = CURRENT_TIMESTAMP,
     tasks.status = '18' 
-    WHERE task_id = ?
+    WHERE date_completion.task = ?
     `;
     await post_database(query, [id]);
     res.json({ message: "Req_person accounts Tasks added successfully" });
   } catch (err) {
     console.error("Error updating req_person Accounts");
+  }
+};
+
+exports.get_user_history = async (req, res) => {
+  const req_person = req.query;
+  if (!req_person) {
+    return res.status(400).json({ error: "Id is required" });
+  }
+  try {
+    const query = `
+    SELECT apex.apex_id,apex.amount AS apex_amount,
+    tasks.task_id,users.name,users.role_id,task_type.type,
+    req_person, product_details,purchase_order,ref_no, 
+    remaining_amount, quantity,received_qty, required_qty, 
+    tasks.amount, advance_amount, task_date, tasks.status 
+    FROM tasks
+    INNER JOIN apex
+    ON tasks.apex = apex.id
+    INNER JOIN users
+    ON tasks.req_person = users.id 
+    INNER JOIN task_type
+    ON tasks.task_type = task_type.id
+    WHERE req_person =?
+    AND tasks.status IN ('14')
+    AND users.role_id IN ('1')
+    `;
+    const history = await get_database(query, [req_person]);
+    const formatDate = (dateString) => {
+      const date = new Date(dateString);
+      return date.toLocaleDateString() + " " + date.toLocaleTimeString();
+    };
+    history.forEach((his) => {
+      his.task_date = formatDate(his.task_date);
+    });
+    res.json(history);
+  } catch (err) {
+    console.error("Error fetching History tasks Status", err);
+    res.status(500).json({ error: "Error fetching History task status" });
   }
 };

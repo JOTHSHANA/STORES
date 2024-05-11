@@ -3,10 +3,10 @@ const { get_database, post_database } = require("../../config/db_utils");
 exports.get_Taskstatus = async (req, res) => {
   try {
     const query = `
-    SELECT apex.apex_id, apex.amount AS apex_amount,tasks.task_id,users.name,task_type.type, req_person, product_details, quantity, tasks.amount, advance_amount, task_date, tasks.status 
+    SELECT apex.apex_id, apex.amount AS apex_amount,tasks.task_id,users.name,users.role, task_type.type, req_person, product_details, quantity, tasks.amount, advance_amount, task_date, tasks.status 
     FROM tasks
     INNER JOIN apex
-    ON tasks.apex_id ON apex.id
+    ON tasks.apex = apex.id
     INNER JOIN users
     ON tasks.req_person = users.id
     INNER JOIN task_type
@@ -42,3 +42,32 @@ exports.get_user = async (req, res) => {
     res.status(500).json({ error: "Error fetching user" });
   }
 };
+
+exports.get_history = async(req, res)=>{
+  try{
+    const query = `
+    SELECT apex.apex_id, apex.amount AS apex_amount,tasks.task_id,users.name,users.role_id, task_type.type, req_person, product_details, quantity, tasks.amount, advance_amount, task_date, tasks.status 
+    FROM tasks
+    INNER JOIN apex
+    ON tasks.apex = apex.id
+    INNER JOIN users
+    ON tasks.req_person = users.id
+    INNER JOIN task_type
+    ON tasks.task_type = task_type.id
+    WHERE tasks.status IN ('14')
+    `
+    const history = await get_database(query)
+    const formatDate = (dateString)=>{
+      const date = new Date(dateString);
+      return date.toLocaleDateString()+ " "+date.toLocaleTimeString()
+
+    }
+    history.forEach(his =>{
+      his.task_date = formatDate(his.task_date)
+    })
+    res.json(history)
+  }catch(err){
+    console.error("Error fetching History tasks Status", err);
+    res.status(500).json({ error: "Error fetching History task status" });
+  }
+}

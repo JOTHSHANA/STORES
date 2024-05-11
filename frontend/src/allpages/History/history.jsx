@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
+import RoleCheck from "../auth/RoleResource/resources";
 import AppLayout from "../../components/applayout/AppLayout";
-import './AllTasks.css';
+import '../AllTasks/AllTasks.css';
 import requestApi from "../../components/utils/axios";
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -13,10 +14,11 @@ import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import Box from '@mui/material/Box';
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
-import RoleCheck from "../auth/RoleResource/resources";
+import Cookies from "js-cookie";
 
 
-function AllTasks() {
+
+function History() {
     return <AppLayout rId={7} body={<Body />} />;
 }
 
@@ -25,6 +27,7 @@ function Body() {
     const [selectedTask, setSelectedTask] = useState(null); // Track the selected task
     const [open, setOpen] = useState(false); // Dialog open state
     const [search, setSearch] = useState("")
+    const id = Cookies.get('id');
 
     useEffect(() => {
         fetchTaskData();
@@ -35,13 +38,23 @@ function Body() {
     };
     const fetchTaskData = async () => {
         try {
-            const response = await requestApi("GET", '/status/task');
-            console.log('Response:', response); // Log the response
-            if (!response.data || !response.success) {
+            const roleId = Cookies.get('role');
+            let apiEndpoint
+            if (parseInt(roleId) === 1) {
+                console.log("1")
+                apiEndpoint = `/status/req-person-history?req_person=${id}`; 
+            } else {
+                console.log("other")
+                apiEndpoint = '/status/history'; 
+            }
+
+            const response = await requestApi("GET", apiEndpoint);
+            console.log('Response:', response); 
+            if (!response.data ||!response.success) {
                 throw new Error('Failed to fetch task data');
             }
             const data = response.data;
-            console.log('Task data:', data); // Log the data received
+            console.log('Task data:', data); 
             setTaskData(data);
         } catch (error) {
             console.error('Error fetching task data:', error);
@@ -50,7 +63,7 @@ function Body() {
     };
 
     const handleClickOpen = (task) => {
-        setSelectedTask(task); // Set the selected task
+        setSelectedTask(task); //Set the selected task
         setOpen(true);
     };
 
@@ -166,4 +179,4 @@ function Body() {
     );
 }
 
-export default RoleCheck(AllTasks, [2,3,4,5,6]);
+export default RoleCheck(History, [1,2,3, 4, 5, 6]);

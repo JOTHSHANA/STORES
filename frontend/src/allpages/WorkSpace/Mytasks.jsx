@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import RoleCheck from "../auth/RoleResource/resources";
 import AppLayout from "../../components/applayout/AppLayout";
 import '../AllTasks/AllTasks.css'
 import requestApi from "../../components/utils/axios";
@@ -34,7 +35,7 @@ function Body() {
 
     const fetchTaskData = async () => {
         try {
-            const response = await requestApi("GET", `/status/req-person?req_person=${id}`);
+            const response = await requestApi("GET", `/status/req-person/all?req_person=${id}`);
             if (!response.data || !response.success) {
                 throw new Error('Failed to fetch task data');
             }
@@ -230,4 +231,4 @@ function Body() {
     );
 }
 
-export default MyTasks;
+export default RoleCheck(MyTasks, [1, 2, 3]);

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import RoleCheck from "../auth/RoleResource/resources";
 import AppLayout from "../../components/applayout/AppLayout";
 import '../AllTasks/AllTasks.css'
 import requestApi from "../../components/utils/axios";
@@ -13,7 +14,7 @@ import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import Box from '@mui/material/Box';
 import Cookies from "js-cookie";
-import TaskForm from "../TaskForm/TaskForm"
+// import TaskForm from "../TaskForm/TaskForm"
 
 function Approvals() {
     return <AppLayout rId={7} body={<Body />} />;
@@ -222,4 +223,4 @@ function Body() {
     );
 }
 
-export default Approvals;
+export default RoleCheck(Approvals, [1, 2, 3, 4,5, 6]);
