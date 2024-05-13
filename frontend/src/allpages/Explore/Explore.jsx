@@ -1,7 +1,8 @@
 import React from "react";
 import RoleCheck from "../auth/RoleResource/resources";
+import AppLayout from "../../components/applayout/AppLayout";
 
-function Explore(){
+function Explore() {
     return <AppLayout rId={2} body={<Body />} />;
 }
 
@@ -14,4 +15,4 @@ function Body() {
     );
 }
 
-export default RoleCheck(Explore, [2, 3, 4 ,5, 6])
+export default RoleCheck(Explore, [2, 3, 4, 5, 6])
