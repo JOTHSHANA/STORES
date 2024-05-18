@@ -37,7 +37,7 @@ exports.get_stores = async (req, res) => {
 
 exports.update_stores_1 = async (req, res) => {
   const id = req.query.id;
-  const purchase_order = req.body;
+  const purchase_order = req.body.purchase_order;
   if (!id) {
     return res.status(400).json({ error: "task id is required" });
   }
@@ -49,7 +49,7 @@ exports.update_stores_1 = async (req, res) => {
     tasks.purchase_order =?
     WHERE task_id= ?
     `;
-    await post_database(query, [id, purchase_order]);
+    await post_database(query, [purchase_order,id]);
     res.json({ message: " stores 1 Tasks added successfully" });
   } catch (err) {
     console.error("Error updating  Stores 1");
@@ -140,7 +140,7 @@ exports.update_stores_sent_bill = async (req, res) => {
   try {
     const query = `
     UPDATE date_completion ,tasks
-    SET date_completion.stores_status_sent__bill = CURRENT_TIMESTAMP,
+    SET date_completion.stores_status_sent_bill = CURRENT_TIMESTAMP,
     tasks.status = '11' 
     WHERE task_id = ?
     `;

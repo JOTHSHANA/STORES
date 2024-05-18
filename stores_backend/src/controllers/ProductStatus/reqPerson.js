@@ -205,7 +205,7 @@ exports.update_accounts = async (req, res) => {
     UPDATE date_completion ,tasks
     SET date_completion.rp_app_acc = CURRENT_TIMESTAMP,
     tasks.status = '13'
-    WHERE date_completion.task = ?
+    WHERE task_id = ?
     `;
     await post_database(query, [id]);
     res.json({ message: "Req_person accounts Tasks added successfully" });
@@ -224,7 +224,7 @@ exports.update_par_accounts = async (req, res) => {
     UPDATE date_completion ,tasks
     SET date_completion.par_rp_app_acc = CURRENT_TIMESTAMP,
     tasks.status = '18'
-    WHERE date_completion.task = ?
+    WHERE task_id = ?
     `;
     await post_database(query, [id]);
     res.json({ message: "Req_person accounts Tasks added successfully" });

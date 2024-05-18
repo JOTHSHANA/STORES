@@ -36,7 +36,7 @@ exports.get_accounts = async (req, res) => {
 
 exports.update_accounts_advance = async (req, res) => {
   const id = req.query.id;
-  const ref_no = req.body;
+  const ref_no = req.body.ref_no;
   if (!id || !ref_no) {
     return res.status(400).json({ error: "task id and ref_no is required" });
   }
@@ -48,7 +48,7 @@ exports.update_accounts_advance = async (req, res) => {
           tasks.ref_no =?
           WHERE task_id = ?
           `;
-    await post_database(query, [id, ref_no]);
+    await post_database(query, [ref_no, id]);
     res.json({ message: " accounts advance Tasks added successfully" });
   } catch (err) {
     console.error("Error updating  accounts advance ");
