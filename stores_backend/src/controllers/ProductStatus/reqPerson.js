@@ -8,10 +8,7 @@ exports.get_ReqPerson = async (req, res) => {
   try {
     const query = `
     SELECT apex.apex_id,apex.amount AS apex_amount,
-    tasks.task_id,users.name,users.role_id,task_type.type,
-    req_person, product_details,purchase_order,ref_no, 
-    remaining_amount, quantity,received_qty, required_qty, 
-    tasks.amount, advance_amount, task_date, tasks.status 
+    users.name, tasks.* ,task_type.type
     FROM tasks
     INNER JOIN apex
     ON tasks.apex = apex.id
@@ -19,7 +16,7 @@ exports.get_ReqPerson = async (req, res) => {
     ON tasks.req_person = users.id
     INNER JOIN task_type
     ON tasks.task_type = task_type.id
-    WHERE req_person =?
+    WHERE req_person =? AND tasks.status != 0
      `;
     const rperson = await get_database(query, [req_person]);
     const formatDate = (dateString) => {
@@ -44,10 +41,7 @@ exports.get_App_ReqPerson = async (req, res) => {
   try {
     const query = `
     SELECT apex.apex_id,apex.amount AS apex_amount,
-    tasks.task_id,users.name ,task_type.type,
-    req_person, product_details,purchase_order,ref_no, 
-    remaining_amount, quantity,received_qty, required_qty, 
-    tasks.amount, advance_amount, task_date, tasks.status 
+    users.name, tasks.* ,task_type.type
     FROM tasks
     INNER JOIN apex
     ON tasks.apex = apex.id
@@ -76,6 +70,7 @@ exports.get_App_ReqPerson = async (req, res) => {
 exports.post_ReqPerson = async (req, res) => {
   const {
     apex_id,
+    task_id,
     req_person,
     task_type,
     product_details,
@@ -86,6 +81,7 @@ exports.post_ReqPerson = async (req, res) => {
 
   if (
     !apex_id ||
+    !task_id ||
     !req_person ||
     !task_type ||
     !product_details ||
@@ -99,37 +95,37 @@ exports.post_ReqPerson = async (req, res) => {
 
   try {
     const taskInsertQuery = `
-      INSERT INTO tasks (apex, req_person, task_type, product_details, amount, advance_amount, quantity, task_date)
-      VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP);
+      INSERT INTO tasks (apex,task_id, req_person, task_type, product_details, amount, advance_amount, quantity,required_qty, task_date)
+      VALUES (?,?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP);
     `;
+  
     await post_database(taskInsertQuery, [
       apex_id,
+      task_id,
       req_person,
       task_type,
       product_details,
       amount,
       advance_amount,
       quantity,
+      quantity
     ]);
-    const taskIdQuery = `SELECT task_id FROM tasks ORDER BY task_id DESC LIMIT 1`;
+    const taskIdQuery = `SELECT id FROM tasks ORDER BY task_id DESC LIMIT 1`;
     const taskIdResult = await get_database(taskIdQuery);
     console.log(taskIdResult);
-    if (
-      !taskIdResult ||
-      taskIdResult.length === 0 ||
-      !taskIdResult[0].task_id
-    ) {
+    if (!taskIdResult || taskIdResult.length === 0 || !taskIdResult[0].id) {
       return res.status(500).json({ error: "Unable to fetch taskId" });
     }
 
-    const taskId = taskIdResult[0].task_id;
+    const taskId = taskIdResult[0].id;
 
     const dateCompletionQuery = `
       INSERT INTO date_completion (task) VALUES (?);
     `;
+   
     await post_database(dateCompletionQuery, [taskId]);
 
-    res.json({ message: "Tasks added successfully" });
+    res.json({ message: "Tasks  added successfully" });
   } catch (error) {
     console.error("Error:", error);
     res
@@ -241,10 +237,7 @@ exports.get_user_history = async (req, res) => {
   try {
     const query = `
     SELECT apex.apex_id,apex.amount AS apex_amount,
-    tasks.task_id,users.name,users.role_id,task_type.type,
-    req_person, product_details,purchase_order,ref_no, 
-    remaining_amount, quantity,received_qty, required_qty, 
-    tasks.amount, advance_amount, task_date, tasks.status 
+    users.name,users.role_id,task_type.type,tasks.*
     FROM tasks
     INNER JOIN apex
     ON tasks.apex = apex.id

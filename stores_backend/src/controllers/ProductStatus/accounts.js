@@ -4,10 +4,7 @@ exports.get_accounts = async (req, res) => {
   try {
     const query = `
     SELECT apex.apex_id,apex.amount AS apex_amount,
-    tasks.task_id,users.name ,task_type.type,
-    req_person, product_details,purchase_order,ref_no, 
-    remaining_amount, quantity,received_qty, required_qty, 
-    tasks.amount, advance_amount, task_date, tasks.status 
+    users.name, tasks.* ,task_type.type
     FROM tasks
     INNER JOIN apex
     ON tasks.apex = apex.id
@@ -48,7 +45,7 @@ exports.update_accounts_advance = async (req, res) => {
           tasks.ref_no =?
           WHERE task_id = ?
           `;
-    await post_database(query, [id, ref_no]);
+    await post_database(query, [ ref_no, id]);
     res.json({ message: " accounts advance Tasks added successfully" });
   } catch (err) {
     console.error("Error updating  accounts advance ");
@@ -64,7 +61,8 @@ exports.update_accounts_pay = async (req, res) => {
     const query = `
           UPDATE date_completion ,tasks
           SET date_completion.acc_app_pay = CURRENT_TIMESTAMP,
-          tasks.status = '12' 
+          tasks.status = '12' ,
+          tasks.indicator = '5'
           WHERE task_id = ?
           `;
     await post_database(query, [id]);
