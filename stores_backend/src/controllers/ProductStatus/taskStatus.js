@@ -3,7 +3,8 @@ const { get_database, post_database } = require("../../config/db_utils");
 exports.get_Taskstatus = async (req, res) => {
   try {
     const query = `
-    SELECT apex.apex_id, apex.amount AS apex_amount,tasks.task_id,users.name,users.role_id, task_type.type, req_person, product_details, quantity, tasks.amount, advance_amount, task_date, tasks.status 
+    SELECT apex.apex_id,apex.amount AS apex_amount,
+    users.name, tasks.* ,task_type.type
     FROM tasks
     INNER JOIN apex
     ON tasks.apex = apex.id
@@ -46,7 +47,8 @@ exports.get_user = async (req, res) => {
 exports.get_history = async(req, res)=>{
   try{
     const query = `
-    SELECT apex.apex_id, apex.amount AS apex_amount,tasks.task_id,users.name,users.role_id, task_type.type, req_person, product_details, quantity, tasks.amount, advance_amount, task_date, tasks.status 
+    SELECT apex.apex_id,apex.amount AS apex_amount,
+    users.name, tasks.* ,task_type.type
     FROM tasks
     INNER JOIN apex
     ON tasks.apex = apex.id
