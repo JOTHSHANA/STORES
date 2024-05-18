@@ -4,10 +4,7 @@ exports.get_Mteam = async (req, res) => {
   try {
     const query = `
     SELECT apex.apex_id,apex.amount AS apex_amount,
-    tasks.task_id,users.name ,task_type.type,
-    req_person, product_details,purchase_order,ref_no, 
-    remaining_amount, quantity,received_qty, required_qty, 
-    tasks.amount, advance_amount, task_date, tasks.status 
+    users.name, tasks.* ,task_type.type
     FROM tasks
     INNER JOIN apex
     ON tasks.apex = apex.id
@@ -15,7 +12,7 @@ exports.get_Mteam = async (req, res) => {
     ON tasks.req_person = users.id
     INNER JOIN task_type
     ON tasks.task_type = task_type.id
-    WHERE tasks.status IN ('0'||'1', '2', '3','4','5','6','7','8','9','10','11','12','13)
+    WHERE tasks.status IN ('1', '2', '3','4','5','6','7','8','9','10','11','12','13)
 
     `;
     const mteam = await get_database(query);

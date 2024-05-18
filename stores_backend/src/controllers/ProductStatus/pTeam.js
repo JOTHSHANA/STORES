@@ -5,10 +5,7 @@ exports.get_pteam = async (req, res) => {
   try {
     const query = `
     SELECT apex.apex_id,apex.amount AS apex_amount,
-    tasks.task_id,users.name ,task_type.type,
-    req_person, product_details,purchase_order,ref_no,
-    remaining_amount, quantity,received_qty, required_qty,
-    tasks.amount, advance_amount, task_date, tasks.status
+    users.name, tasks.* ,task_type.type
     FROM tasks
     INNER JOIN apex
     ON tasks.apex = apex.id
@@ -43,8 +40,14 @@ exports.update_advance_pteam = async (req, res) => {
     const query = `
     UPDATE date_completion, tasks
     SET date_completion.pteam_app = CURRENT_TIMESTAMP,
+<<<<<<< HEAD
     tasks.status = '2'
     WHERE task_id = ?
+=======
+    tasks.status = '2',
+    tasks.indicator = '2'
+    WHERE date_completion.task = ?
+>>>>>>> 7afd23f370d097d062c4bc7f96fecbb941dfccd8
 
     `;
     await post_database(query, [id]);
@@ -63,8 +66,9 @@ exports.update_pteam = async (req, res) => {
     const query = `
     UPDATE date_completion, tasks
     SET date_completion.pteam_app = CURRENT_TIMESTAMP,
-    tasks.status = '3'
-    WHERE task_id = ?
+    tasks.status = '3',
+    tasks.indicator = '2'
+    WHERE date_completion.task = ?
 
     `;
     await post_database(query, [id]);
@@ -107,7 +111,7 @@ exports.update_Partial_PurchaseBill = async (req, res) => {
     WHERE task_id = ?
     `;
     await post_database(query, [id]);
-    res.json({ message: "PTeam Partail updated successfull" });
+    res.json({ message: "PTeam Partial updated successfull" });
   } catch (err) {
     console.error("Error Updating Partial close task", err);
   }
