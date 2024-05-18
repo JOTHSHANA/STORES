@@ -20,6 +20,9 @@ a:hover {
   font-family: "Hind", sans-serif;
 }
 
+label{
+  font-family: "Hind";
+}
 body {
   margin: 0;
   font-family: "Hind", sans-serif;

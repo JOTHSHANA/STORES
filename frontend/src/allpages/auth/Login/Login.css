@@ -4,7 +4,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #d7d7da;
+    background-color: #ecebf3;
 }
 
 .login-card {
@@ -73,11 +73,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: #d7d7da;
+    background-color: #ecebf3;
 }
 
 .error-card{
-    height: 40%;
     width: 50%;
     border-radius: 5px;
     padding: 15px;
@@ -92,8 +91,6 @@
     
 }
 
-.error-text{
-    font-size: 100px;
-    margin: 0px;
-    color: #63228B;
+.error-img{
+    height: 300px;
 }

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import requestApi from '../../components/utils/axios';
-import RoleCheck from '../auth/RoleResource/resources';
 import AppLayout from '../../components/applayout/AppLayout';
 import Button from '../../components/Button/Button';
 import Cookies from "js-cookie";
 import './TaskForm.css';
+import Select from 'react-select';
 
 function TaskForm() {
     const [task_type, setTaskType] = useState('');
@@ -17,7 +17,7 @@ function TaskForm() {
     const [advanceAmount, setAdvanceAmount] = useState(0);
     const [apexOptions, setApexOptions] = useState([]);
     const [selectedApexId, setSelectedApexId] = useState("");
-    const [additionalFields, setAdditionalFields] = useState([]); // State to store additional fields
+    const [additionalFields, setAdditionalFields] = useState([]);
 
     const req_id = Cookies.get('id');
 
@@ -44,8 +44,9 @@ function TaskForm() {
         }
     };
 
-    const handleApexSelect = (id) => {
-        setSelectedApexId(id);
+    const handleApexSelect = (selectedOption) => {
+        setSelectedApexId(selectedOption.label);
+        console.log(selectedOption.value);
     };
 
     const handleSubmit = async (event) => {
@@ -84,7 +85,7 @@ function TaskForm() {
         setAdvancePayment('');
         setAdvanceAmount(0);
         setAmount(0);
-        setAdditionalFields([]); // Clear additional fields
+        setAdditionalFields([]);
     };
 
     const handleAddField = () => {
@@ -105,28 +106,29 @@ function TaskForm() {
         <div className="form-div">
             <form className="form" onSubmit={handleSubmit}>
 
-            <div className="each-field">
-                    <label className="form-label" htmlFor="apex">Apex:<span className="required">*</span></label>
-                    <select className="form-input-select" name="apex" value={selectedApexId} id="apex" onChange={(e) => handleApexSelect(e.target.value)} required>
-                        <option value="">Select Apex</option>
-                        {apexOptions.map((apex, index) => (
-                            <option key={index} value={apex.id}>{apex.apex}</option>
-                        ))}
-                    </select>
-                </div>
-                
                 <div className="each-field">
-                    <label className="form-label" htmlFor="taskid">Task type:<span className="required">*</span></label>
-                    <select className="form-input-select" name="task-type" value={task_type} id="tasktype" onChange={(e) => setTaskType(e.target.value)} required>
-                        <option value="" disabled>Select type</option>
-                        {taskTypes.map((task, index) => (
-                            <option key={index} value={task.id}>{task.type}</option>
-                        ))}
-                    </select>
+                    <div className="form-label" htmlFor="apex">Apex ID:<span className="required">*</span></div>
+                    <Select
+                        className="form-input-select"
+                        options={apexOptions.map(apex => ({ value: apex.id, label: apex.apex }))}
+                        value={apexOptions.find(apex => apex.id === selectedApexId)}
+                        onChange={handleApexSelect}
+                        placeholder="Select Apex ID"
+                        required
+                    />
                 </div>
 
-                {/* Apex selection field */}
-                
+                <div className="each-field">
+                    <label className="form-label" htmlFor="taskid">Task type:<span className="required">*</span></label>
+                    <Select
+                        className="form-input-select"
+                        options={taskTypes.map(task => ({ value: task.id, label: task.type }))}
+                        value={taskTypes.find(task => task.id === task_type)}
+                        onChange={(selectedOption) => setTaskType(selectedOption.value)}
+                        placeholder="Select task type"
+                        required
+                    />
+                </div>
 
                 <div className="each-field">
                     <label className="form-label" htmlFor="product_details">Product Details:<span className="required">*</span></label>
@@ -140,17 +142,22 @@ function TaskForm() {
 
                 <div className="each-field">
                     <label className="form-label" htmlFor="advancePayment">Advance payment:<span className="required">*</span></label>
-                    <select className="form-input-select" name="advancePayment" value={advancePayment} id="advancePayment" onChange={(e) => setAdvancePayment(e.target.value)} required>
-                        <option value="" disabled>Select type</option>
-                        <option value="Yes">Yes</option>
-                        <option value="No">No</option>
-                    </select>
+                    <Select
+                        className="form-input-select"
+                        options={[
+                            { value: "Yes", label: "Yes" },
+                            { value: "No", label: "No" }
+                        ]}
+                        onChange={(selectedOption) => setAdvancePayment(selectedOption.value)}
+                        placeholder="Select Yes/No"
+                        required
+                    />
                 </div>
 
                 {advancePayment === "Yes" && (
                     <div className="each-field">
                         <label className="form-label" htmlFor="advance_amount">Advance Amount:<span className="required">*</span></label>
-                        <input type="number" className="form-input" name="advance-amount" id="advanceamount" value={advanceAmount} onChange={(e) => setAdvanceAmount(e.target.value)} required />
+                        <input type="number" className="form-input" name="advance-amount" value={advanceAmount} onChange={(e) => setAdvanceAmount(e.target.value)} required />
                     </div>
                 )}
 
@@ -159,11 +166,9 @@ function TaskForm() {
                     <input className="form-input" type="number" name="quantity" value={quantity} onChange={(e) => setQuantity(e.target.value)} required />
                 </div>
 
-                {/* Additional fields */}
                 {additionalFields.map((field, index) => (
                     <div key={index}>
-
-                        <h3 style={{marginTop:"20px", marginBottom:"0px"}}>Product: {index+1}</h3>
+                        <h3 style={{ marginTop: "20px", marginBottom: "0px", color: "#1c0c6a", textDecoration: "underline" }}>Product: {index + 1}</h3>
                         <div className='repeating-box'>
                             <div className='all-repeating-fields'>
                                 <label className="form-label" htmlFor={`productName-${index}`}>Product Name:</label>
@@ -182,12 +187,10 @@ function TaskForm() {
                                 <input className="form-input" type="text" value={field.total} disabled />
                             </div>
                         </div>
-
-
                     </div>
                 ))}
-                <div className="each-field1" onClick={handleAddField}>
-                    adddd
+                <div className="each-field-add-product" onClick={handleAddField}>
+                    <div className='add-product-button'>Add Product</div>
                 </div>
 
                 <div className="each-field1">
@@ -199,4 +202,4 @@ function TaskForm() {
     );
 }
 
-export default RoleCheck(TaskForm[1, 2, 3]);
+export default TaskForm;

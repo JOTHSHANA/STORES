@@ -2,13 +2,15 @@ import React, { useState } from "react";
 import Modal from "@mui/material/Modal";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import Button from "../Button/Button";
+import LogoutIcon from '@mui/icons-material/Logout';
 import QueryStatsTwoToneIcon from '@mui/icons-material/QueryStatsTwoTone';
+import Cookies from "js-cookie";
+
 
 function TopBar(props) {
   const [modalOpen, setModalOpen] = useState(false);
-
+  const name = Cookies.get('name').toUpperCase();
   const handleOpenModal = () => {
     setModalOpen(true);
   };
@@ -39,14 +41,16 @@ function TopBar(props) {
         }}
       >
         <div onClick={props.sidebar} className="sidebar-menu">
-          <MenuRoundedIcon sx={{ color: "#472d2d",cursor:"pointer" }} />
+          <MenuRoundedIcon sx={{ color: "#472d2d", cursor: "pointer" }} />
         </div>
-        <div className="app-name"><QueryStatsTwoToneIcon sx={{fontSize:"30px", color:"#1c0c6a"}}/>TRACKING</div>
+        <div className="app-name"><QueryStatsTwoToneIcon sx={{ fontSize: "30px", color: "#1c0c6a" }} />TRACKING</div>
       </div>
       <div className="topbar-right-content">
-        
+        <div>
+          <p className="user-name">{name}</p>
+        </div>
         <div onClick={handleOpenModal}>
-          <MoreVertIcon sx={{ color: "#63228B", cursor:"pointer" }} />
+          <LogoutIcon sx={{ color: "#1c0c6a", cursor: "pointer" }} />
         </div>
       </div>
       <Modal
@@ -55,6 +59,7 @@ function TopBar(props) {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
         className="model"
+        sx={{border:"none"}}
       >
         <div
           style={{
@@ -65,22 +70,25 @@ function TopBar(props) {
             backgroundColor: "#fff",
             padding: "20px",
             borderRadius: "5px",
-            width:"30%",
+            width: "30%",
             display: "flex",
             alignItems: "center",
-            justifyContent:"center",
-            flexDirection: "column"
+            justifyContent: "center",
+            flexDirection: "column",
+            color:"#493d88",
+            border:"none",
+            minWidth:"350px"
           }}
         >
           <h3 id="modal-modal-description">
             Are you sure you want to logout?
           </h3>
           <div className="logout-buttons">
-              <Button onClick={handleCloseModal} label="CANCEL"/>
-              <Button
-                onClick={handleCloseModal}
-                label="LOGOUT"
-              />
+            <Button onClick={handleCloseModal} label="CANCEL" />
+            <Button
+              onClick={handleCloseModal}
+              label="LOGOUT"
+            />
           </div>
         </div>
       </Modal>

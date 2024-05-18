@@ -40,14 +40,9 @@ exports.update_advance_pteam = async (req, res) => {
     const query = `
     UPDATE date_completion, tasks
     SET date_completion.pteam_app = CURRENT_TIMESTAMP,
-<<<<<<< HEAD
-    tasks.status = '2'
-    WHERE task_id = ?
-=======
     tasks.status = '2',
     tasks.indicator = '2'
     WHERE date_completion.task = ?
->>>>>>> 7afd23f370d097d062c4bc7f96fecbb941dfccd8
 
     `;
     await post_database(query, [id]);

@@ -1,16 +1,19 @@
 import React from "react";
 import "./auth/Login/Login.css";
 import { Link } from "react-router-dom";
+import error from "../assets/error.png"
 
 function Error() {
   return (
     <div className="error-page">
       <div className="error-card">
-        <h1 className="error-text">404</h1>
+        
+          <img src={error} alt="404" className="error-img"/>
+        
         <p
           style={{
             margin: "0px",
-            color: "#63228B",
+            color: "#1c0c6a",
             fontWeight: "700",
           }}
         >

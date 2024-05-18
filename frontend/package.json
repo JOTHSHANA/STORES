@@ -20,7 +20,8 @@
     "react-countdown": "^2.3.5",
     "react-dom": "^18.2.0",
     "react-multi-date-picker": "^4.4.1",
-    "react-router-dom": "^6.23.0"
+    "react-router-dom": "^6.23.0",
+    "react-select": "^5.8.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",

@@ -25,7 +25,11 @@ const Welcome = () => {
         id: Cookies.get("id"),
       };
       console.log("Saved JSON data:", savedData);
-      navigate("/approvals");
+      if(role === 1){
+      navigate("/approvals");}
+        else{
+          navigate('/alltasks')
+        }
     }
   }, [searchParams, navigate]);
 
