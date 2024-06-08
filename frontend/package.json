@@ -16,6 +16,7 @@
     "@mui/material": "^5.15.15",
     "axios": "^1.6.8",
     "js-cookie": "^3.0.5",
+    "ngrok": "^5.0.0-beta.2",
     "react": "^18.2.0",
     "react-countdown": "^2.3.5",
     "react-dom": "^18.2.0",
